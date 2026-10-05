@@ -1,6 +1,6 @@
 /* data/ingredient-info.json에서 자동 생성. 직접 고치지 말고 JSON을 고친 뒤 cd tests && node tools/sync-data.js */
 window.INGREDIENT_INFO = {
-  "_note": "영수증 OCR용 재료 정보예요. aliases = 영수증 상품명에서 찾을 별칭(공백 없이 2글자 이상), exclude = 그 별칭이 들어 있어도 다른 상품인 경우(예: 사과식초는 사과가 아님), defaultShelfDays = 산 날부터 일반적인 보관 일수(냉장 기준, 새우·만두는 냉동 기준). 영수증에는 유통기한이 없어서 이 값으로 넣고, 사용자가 목록에서 확인·수정해요. 순서는 sample-fridge.json master와 같아요.",
+  "_note": "영수증 OCR용 재료 정보예요. aliases = 영수증 상품명에서 찾을 별칭(공백 없이 2글자 이상), exclude = 그 별칭이 들어 있어도 다른 상품인 경우(예: 사과식초는 사과가 아님), defaultShelfDays = 산 날부터 일반적인 보관 일수(냉장 기준, 새우·만두는 냉동 기준). 영수증에는 유통기한이 없어서 이 값으로 넣고, 사용자가 목록에서 확인·수정해요. 순서는 sample-fridge.json master와 같아요. globalExclude = 줄에 이 단어가 있으면 완제품으로 보고 그 줄 전체를 재료로 치지 않아요(예: 달걀말이김밥, 소금빵). 영수증 OCR은 같은 자리 한 글자의 모음·받침·된소리 차이까지 허용해요(자모 6개 이상 별칭만, js/receipt.js).",
   "items": {
     "대파": {
       "aliases": [
@@ -263,7 +263,10 @@ window.INGREDIENT_INFO = {
         "계란",
         "달걀",
         "유정란",
-        "특란"
+        "특란",
+        "구운란",
+        "맥반석란",
+        "훈제란"
       ],
       "exclude": [
         "계란과자",
@@ -296,7 +299,8 @@ window.INGREDIENT_INFO = {
         "목살",
         "앞다리",
         "뒷다리",
-        "대패삼겹"
+        "대패삼겹",
+        "한돈"
       ],
       "exclude": [
         "돼지바"
@@ -379,7 +383,6 @@ window.INGREDIENT_INFO = {
         "소고기",
         "한우",
         "국거리",
-        "불고기용",
         "차돌박이",
         "우삼겹"
       ],
@@ -630,5 +633,17 @@ window.INGREDIENT_INFO = {
       "exclude": [],
       "defaultShelfDays": 180
     }
-  }
+  },
+  "globalExclude": [
+    "김밥",
+    "도시락",
+    "과자",
+    "라면",
+    "스낵",
+    "칩",
+    "빵",
+    "아이스크림",
+    "주스",
+    "음료"
+  ]
 };

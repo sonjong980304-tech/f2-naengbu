@@ -21,6 +21,7 @@
 <script src="data/sample-fridge.js"></script>
 <script src="data/icon-map.js"></script>
 <script src="js/receipt.js"></script>
+<script src="js/ocr.js"></script>
 <script src="data/ingredient-info.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -214,6 +215,8 @@ const OCR_OPTS = {
   corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',
   langPath: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/kor@1.0.0/4.0.0_best_int'
 };
+// 영수증용 읽기 모드(한 덩어리 글) + 띄어쓰기 유지 — tests/tools/ocr-bench 측정으로 고른 설정
+const OCR_PARAMS = { tessedit_pageseg_mode: '6', preserve_interword_spaces: '1' };
 const OCR_TIMEOUT_MS = 25000;   // 준비(라이브러리·한국어 데이터)와 인식 단계에 각각 적용
 const withTimeout = (pr, ms) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
 function loadScript(src){
@@ -236,7 +239,10 @@ async function recognizeReceipt(image, onProgress){
   })();
   try {
     worker = await withTimeout(creating, OCR_TIMEOUT_MS);
-    const { data } = await withTimeout(worker.recognize(image), OCR_TIMEOUT_MS);
+    await worker.setParameters(OCR_PARAMS);
+    let img = image;
+    try { img = await window.ReceiptOCR.preprocess(image); } catch(e){}   // 그림자 지우기·대비·크기 보정, 실패하면 원본으로
+    const { data } = await withTimeout(worker.recognize(img), OCR_TIMEOUT_MS);
     return data.text;
   } finally {
     // 준비 단계에서 시간 초과가 나도, 늦게 만들어진 워커까지 정리해요
@@ -252,7 +258,7 @@ async function runScan(){
   };
   try {
     const text = await recognizeReceipt(S.receiptPreview, onProgress);
-    const names = window.Receipt.matchIngredients(text, window.INGREDIENT_INFO.items, Object.values(CATS).flat());
+    const names = window.Receipt.matchIngredients(text, window.INGREDIENT_INFO.items, Object.values(CATS).flat(), { fuzzy: true, globalExclude: window.INGREDIENT_INFO.globalExclude });
     S.pending = names.map(n => ({ name: n, expiryDate: addDays(window.INGREDIENT_INFO.items[n].defaultShelfDays), fromReceipt: true }));
     S.receipt = names.length ? { status: 'found', progress: 100, count: names.length } : { status: 'none', progress: 0, count: 0 };
   } catch(e){

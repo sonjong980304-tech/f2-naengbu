@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OCR 측정 도구 (개발용)</title>
+<!-- 개발용 측정 페이지예요. 앱에는 쓰이지 않고 배포에서도 빠져요(tests/). -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="../../../js/receipt.js"></script>
+<script src="../../../data/ingredient-info.js"></script>
+<script src="../../../data/sample-fridge.js"></script>
+<script src="../../../js/ocr.js" onerror="window.__noOcrJs = true"></script>
+</head>
+<body>
+<script>
+const OPTS = {
+  workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
+  corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',
+};
+const LANG_PATH = { kor: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/kor@1.0.0/4.0.0_best_int', eng: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int' };
+
+// 영수증 한 장을 캔버스로 그려요. distort: clean | small | blur | faded | rotate | lowres | noise
+function drawReceipt(lines, distort) {
+  const font = distort === 'small' ? 15 : 22, lh = Math.round(font * 1.7), W = 520;
+  const H = 120 + lines.length * lh + 120;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  g.fillStyle = distort === 'faded' ? '#efece4' : distort === 'photo' ? '#d6d1c4' : '#ffffff'; g.fillRect(0, 0, W, H);
+  if (distort === 'rotate') { g.translate(W / 2, H / 2); g.rotate(3 * Math.PI / 180); g.translate(-W / 2, -H / 2); }
+  if (distort === 'blur') g.filter = 'blur(1.1px)';
+  if (distort === 'photo') g.filter = 'blur(0.7px)';
+  g.fillStyle = distort === 'faded' ? '#a19d95' : distort === 'photo' ? '#3c3a36' : '#1a1a1a';
+  g.font = `${font + 6}px sans-serif`; g.fillText('이마트 성수점', 24, 50);
+  g.font = `${font}px sans-serif`; g.fillText('2026-10-05 18:42  POS 03', 24, 50 + lh);
+  lines.forEach((l, i) => {
+    const y = 60 + lh * (i + 2);
+    g.textAlign = 'left'; g.fillText(l.text, 24, y);
+    g.textAlign = 'right'; g.fillText(l.price, W - 24, y);
+  });
+  g.textAlign = 'left'; g.fillText('합계', 24, 60 + lh * (lines.length + 3));
+  g.filter = 'none';
+  if (distort === 'noise') {
+    for (let i = 0; i < 2500; i++) { g.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,.35)' : 'rgba(255,255,255,.6)'; g.fillRect(Math.random() * W, Math.random() * H, 1.5, 1.5); }
+  }
+  if (distort === 'shadow' || distort === 'photo') {   // 휴대폰으로 찍을 때 생기는 그림자·가장자리 어두움
+    g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'multiply';
+    const gr = distort === 'shadow' ? g.createLinearGradient(0, 0, W, H * 0.6) : g.createRadialGradient(W / 2, H / 2, W * 0.2, W / 2, H / 2, W * 0.9);
+    gr.addColorStop(0, distort === 'shadow' ? '#5a5a5a' : '#ffffff'); gr.addColorStop(1, distort === 'shadow' ? '#ffffff' : '#7d7a74');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over';
+  }
+  if (distort === 'lowres') {   // 멀리서 찍은 사진처럼 해상도를 낮췄다가 다시 키워요
+    const s = document.createElement('canvas'); s.width = W * 0.45; s.height = H * 0.45;
+    s.getContext('2d').drawImage(c, 0, 0, s.width, s.height);
+    g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = true; g.drawImage(s, 0, 0, W, H);
+  }
+  return c.toDataURL('image/png');
+}
+
+window.runBench = async function (config, cases) {
+  const langs = config.langs || 'kor';
+  const worker = await Tesseract.createWorker(langs, 1, { ...OPTS, langPath: LANG_PATH.kor });
+  if (langs.includes('eng')) { /* 언어별 경로가 다르면 아래에서 따로 불러와요 */ }
+  if (config.params) await worker.setParameters(config.params);
+  const items = window.INGREDIENT_INFO.items, master = Object.values(window.FRIDGE_DATA.master).flat();
+  const out = [];
+  for (const cs of cases) {
+    let img = drawReceipt(cs.lines, cs.distort);
+    if (config.preprocess) {
+      if (!window.ReceiptOCR) throw new Error('js/ocr.js 없음');
+      img = await window.ReceiptOCR.preprocess(img);
+    }
+    const t0 = performance.now();
+    const { data } = await worker.recognize(img);
+    const ms = Math.round(performance.now() - t0);
+    const mo = config.match ? { fuzzy: !!config.match.fuzzy, globalExclude: config.match.globalExclude ? window.INGREDIENT_INFO.globalExclude : [] } : {};
+    const found = window.Receipt.matchIngredients(data.text, items, master, mo);
+    out.push({ id: cs.id, distort: cs.distort, expected: cs.expected, found, ms, text: data.text });
+  }
+  await worker.terminate();
+  return out;
+};
+window.benchReady = true;
+</script>
+</body>
+</html>
