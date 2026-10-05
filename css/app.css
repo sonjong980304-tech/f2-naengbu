@@ -135,6 +135,12 @@ h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.3;lette
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .receipt-note{margin-top:8px}
 .receipt-note.done{color:var(--primary-ink)}
+.receipt-progress{margin-top:12px}
+.receipt-progress .cap{margin-bottom:6px;color:var(--body)}
+.receipt-progress .fresh-track i{background:var(--accent);transition:width .2s}
+.receipt-fallback{margin-top:12px;padding:12px;border-radius:var(--r-lg);background:var(--warn-bg)}
+.receipt-fallback .cap{color:var(--warn-ink)}
+.receipt-fallback .btn{margin-top:10px;height:44px}
 .cta{margin-top:28px}
 .credits{margin-top:28px;text-align:center}
 .credits ul{list-style:none;text-align:left;margin-top:8px;font-size:13px;color:var(--muted);line-height:1.6}

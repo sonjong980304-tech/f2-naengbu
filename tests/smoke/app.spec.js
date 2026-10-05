@@ -257,3 +257,51 @@ test('화면 1 → 2/3 → 4 → 5 흐름과 추천 순서', async ({ page }) =>
 
   expect(errors).toEqual([]);
 });
+
+/* ───────── 영수증 OCR (실제 OCR 대신 window.__naengbuOcrStub로 인식 결과를 흉내 내요) ───────── */
+const PNG_1PX = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+
+async function openReceiptTab(page, stubText) {
+  await page.addInitScript(text => {
+    window.__naengbuOcrStub = async (image, onProgress) => {
+      onProgress(50);
+      if (text === '__throw__') throw new Error('stub fail');
+      return text;
+    };
+  }, stubText);
+  await page.setViewportSize({ width: 390, height: 900 });
+  await open(page);
+  await page.click('[data-act="toggleAdd"]');
+  await page.click('[data-act="tab"][data-tab="receipt"]');
+  await expect(page.locator('[data-act="scan"]')).toBeDisabled();
+  await page.setInputFiles('#receiptFile', { name: 'receipt.png', mimeType: 'image/png', buffer: PNG_1PX });
+  await expect(page.locator('[data-act="scan"]')).toBeEnabled();
+}
+
+test('영수증 OCR: 인식한 재료가 기본 보관 일수로 들어가고 "영수증에서 인식" 태그', async ({ page }) => {
+  const errors = watchErrors(page);
+  await openReceiptTab(page, '이마트\n풀무원 국산콩두부 300g 1 3,980\n깐대파 1봉 2,480\n무항생제 유정란 15구 6,990\n코카콜라 1.5L 3,200');
+  await page.click('[data-act="scan"]');
+  await expect(page.getByText('영수증에서 재료 3개를 찾았어요', { exact: false })).toBeVisible();
+  await expect(page.locator('.row .tag', { hasText: '영수증에서 인식' })).toHaveCount(3);
+  for (const n of ['대파', '두부', '계란']) await expect(page.locator(`.tile[data-n="${n}"]`)).toHaveCount(1);
+  await expect(page.locator('.tile[data-n="대파"] .fresh-label')).toHaveText('D-7');   // 대파 기본 보관 7일
+  await expect(page.locator('.tile[data-n="계란"] .fresh-label')).toHaveText('D-21');
+  expect(errors).toEqual([]);
+});
+
+test('영수증 OCR: 재료를 못 찾으면 샘플 재료로 넣기(시연용) 대체 경로', async ({ page }) => {
+  await openReceiptTab(page, '코카콜라 1.5L\n봉투 50원\n합계 3,250');
+  await page.click('[data-act="scan"]');
+  await expect(page.getByText('영수증에서 재료를 찾지 못했어요', { exact: false })).toBeVisible();
+  await page.click('[data-act="receiptSample"]');
+  await expect(page.getByText('샘플 재료 5개를 냉장고에 넣었어요', { exact: false })).toBeVisible();
+  await expect(page.locator('.row .tag', { hasText: '영수증에서 인식' })).toHaveCount(5);
+});
+
+test('영수증 OCR: 인식 오류가 나도 앱이 멈추지 않고 대체 경로를 보여 줌', async ({ page }) => {
+  await openReceiptTab(page, '__throw__');
+  await page.click('[data-act="scan"]');
+  await expect(page.getByText('영수증을 읽지 못했어요', { exact: false })).toBeVisible();
+  await expect(page.locator('[data-act="receiptSample"]')).toBeVisible();
+});
