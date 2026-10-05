@@ -25,11 +25,13 @@ window.INGREDIENT_INFO = {
     "마늘": {
       "aliases": [
         "마늘",
-        "다진마늘",
         "깐마늘"
       ],
       "exclude": [
-        "마늘빵"
+        "마늘빵",
+        "다진마늘",
+        "간마늘",
+        "다짐마늘"
       ],
       "defaultShelfDays": 14
     },
@@ -50,7 +52,8 @@ window.INGREDIENT_INFO = {
         "감자칩",
         "감자깡",
         "감자탕",
-        "감자튀김"
+        "감자튀김",
+        "감자전분"
       ],
       "defaultShelfDays": 21
     },
@@ -65,7 +68,8 @@ window.INGREDIENT_INFO = {
         "김치찌개",
         "김치볶음밥",
         "김치전",
-        "김치사발"
+        "김치사발",
+        "김치사발면"
       ],
       "defaultShelfDays": 30
     },
@@ -240,6 +244,39 @@ window.INGREDIENT_INFO = {
       "exclude": [],
       "defaultShelfDays": 4
     },
+    "브로콜리": {
+      "aliases": [
+        "브로콜리",
+        "브로컬리"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 7
+    },
+    "상추": {
+      "aliases": [
+        "상추",
+        "적상추",
+        "청상추",
+        "꽃상추"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 5
+    },
+    "청경채": {
+      "aliases": [
+        "청경채"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 7
+    },
+    "숙주": {
+      "aliases": [
+        "숙주",
+        "숙주나물"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 3
+    },
     "스팸": {
       "aliases": [
         "스팸"
@@ -324,7 +361,9 @@ window.INGREDIENT_INFO = {
         "새우깡",
         "새우젓",
         "새우칩",
-        "새우버거"
+        "새우버거",
+        "새우탕면",
+        "새우탕큰사발"
       ],
       "defaultShelfDays": 30
     },
@@ -455,7 +494,8 @@ window.INGREDIENT_INFO = {
         "오징어집",
         "진미채",
         "마른오징어",
-        "오징어젓"
+        "오징어젓",
+        "오징어짬뽕"
       ],
       "defaultShelfDays": 2
     },
@@ -500,6 +540,64 @@ window.INGREDIENT_INFO = {
         "스파게티소스"
       ],
       "defaultShelfDays": 365
+    },
+    "소면": {
+      "aliases": [
+        "소면",
+        "중면"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 365
+    },
+    "우동면": {
+      "aliases": [
+        "우동면",
+        "우동사리",
+        "생우동"
+      ],
+      "exclude": [
+        "튀김우동",
+        "우동컵"
+      ],
+      "defaultShelfDays": 30
+    },
+    "라면": {
+      "aliases": [
+        "라면",
+        "라면사리",
+        "신라면",
+        "진라면",
+        "안성탕면",
+        "삼양라면"
+      ],
+      "exclude": [
+        "컵라면",
+        "라면스프"
+      ],
+      "defaultShelfDays": 180
+    },
+    "당면": {
+      "aliases": [
+        "당면",
+        "자른당면",
+        "납작당면"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 365
+    },
+    "김": {
+      "aliases": [
+        "조미김",
+        "구운김",
+        "재래김",
+        "파래김",
+        "곱창김",
+        "도시락김",
+        "김가루",
+        "김자반"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 90
     },
     "고추장": {
       "aliases": [
@@ -632,13 +730,45 @@ window.INGREDIENT_INFO = {
       ],
       "exclude": [],
       "defaultShelfDays": 180
+    },
+    "다진마늘": {
+      "aliases": [
+        "다진마늘",
+        "간마늘",
+        "다짐마늘"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 30
+    },
+    "전분": {
+      "aliases": [
+        "전분",
+        "감자전분",
+        "옥수수전분",
+        "녹말",
+        "녹말가루"
+      ],
+      "exclude": [],
+      "defaultShelfDays": 365
+    },
+    "카레가루": {
+      "aliases": [
+        "카레가루",
+        "카레분",
+        "고형카레",
+        "바몬드카레",
+        "카레여왕"
+      ],
+      "exclude": [
+        "3분카레"
+      ],
+      "defaultShelfDays": 365
     }
   },
   "globalExclude": [
     "김밥",
     "도시락",
     "과자",
-    "라면",
     "스낵",
     "칩",
     "빵",

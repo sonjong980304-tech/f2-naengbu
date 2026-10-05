@@ -7,7 +7,7 @@ const FRIDGE = require(path.join(__dirname, '..', '..', 'data', 'sample-fridge.j
 const MASTER = Object.values(FRIDGE.master).flat();
 
 test.describe('ingredient-info.json', () => {
-  test('마스터 57종이 모두 있고, 표기가 같고, 순서도 마스터와 같음', () => {
+  test('마스터 재료가 모두 있고, 표기가 같고, 순서도 마스터와 같음', () => {
     const names = Object.keys(INFO.items);
     expect(names).toEqual(MASTER);
   });
@@ -50,6 +50,19 @@ test.describe('matchIngredients', () => {
 
   test('같은 재료가 여러 줄에 나와도 한 번만', () => {
     expect(Receipt.matchIngredients('두부 300g\n순두부 350g\n두부 2입', INFO.items, MASTER)).toEqual(['두부']);
+  });
+
+  test('다진마늘과 통·깐마늘은 서로 다른 재료로 찾음', () => {
+    expect(Receipt.matchIngredients('국산 다진마늘 200g', INFO.items, MASTER)).toEqual(['다진마늘']);
+    expect(Receipt.matchIngredients('간마늘 1kg', INFO.items, MASTER)).toEqual(['다진마늘']);
+    expect(Receipt.matchIngredients('깐마늘 300g', INFO.items, MASTER)).toEqual(['마늘']);
+    expect(Receipt.matchIngredients('깐마늘 300g\n다진마늘 200g', INFO.items, MASTER)).toEqual(['마늘', '다진마늘']);
+  });
+
+  test('새 재료(면·김·전분·카레가루)를 찾고, 라면 상품명 속 김치·오징어·새우는 재료로 치지 않음', () => {
+    const text = '농심 신라면 5입\n오뚜기 김치라면 4입\n오징어짬뽕 5입\n청정원 우동사리 3입\n옛날 소면 900g\n자른당면 500g\n광천 조미김 16봉\n감자전분 400g\n바몬드카레 순한맛';
+    expect(Receipt.matchIngredients(text, INFO.items, MASTER)).toEqual(['소면', '우동면', '라면', '당면', '김', '전분', '카레가루']);
+    expect(Receipt.matchIngredients('컵라면 육개장', INFO.items, MASTER)).toEqual([]);
   });
 
   test('다른 상품 이름 속 재료는 제외 목록으로 거름', () => {

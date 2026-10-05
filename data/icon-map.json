@@ -1,7 +1,7 @@
 {
-  "_note": "재료 이름 → 아이콘 파일. 파일은 icons/ingredients/ 에 있어요. Flaticon 아이콘(source 있음)은 앱 안에 출처를 보여 줘야 해요. license가 own인 v1.2 추가 14종과 v1.5 추가 7종, v1.6 추가 10종은 팀 자체 제작이라 출처 표기가 필요 없어요. Flaticon으로 바꾸려면 reference.flaticonSearch에서 고른 뒤 title·author·source를 채우고 license를 지워요.",
+  "_note": "재료 이름 → 아이콘 파일. 파일은 icons/ingredients/ 에 있어요. Flaticon 아이콘(source 있음)은 앱 안에 출처를 보여 줘야 해요. license가 own인 v1.2 추가 14종과 v1.5 추가 7종, v1.6 추가 10종, v1.7 추가 1종(다진마늘), v1.8 추가 11종은 팀 자체 제작이라 출처 표기가 필요 없어요. Flaticon으로 바꾸려면 reference.flaticonSearch에서 고른 뒤 title·author·source를 채우고 license를 지워요.",
   "basePath": "icons/ingredients/",
-  "license": "Flaticon Free (attribution required) + 자체 제작 31종",
+  "license": "Flaticon Free (attribution required) + 자체 제작 43종",
   "licenseUrl": "https://www.flaticon.com",
   "icons": {
     "대파": {
@@ -587,6 +587,162 @@
       "reference": {
         "why": "호박전·부침개·수제비처럼 반죽과 튀김옷에 필요해요",
         "flaticonSearch": "https://www.flaticon.com/search?word=flour"
+      }
+    },
+    "다진마늘": {
+      "file": "minced-garlic.png",
+      "category": "양념류",
+      "title": "Minced garlic",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.7",
+      "reference": {
+        "why": "양념장·볶음에 바로 넣는 다진 마늘 통이에요. 통마늘과 따로 관리해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=minced%20garlic"
+      }
+    },
+    "브로콜리": {
+      "file": "broccoli.png",
+      "category": "야채·과일",
+      "title": "Broccoli",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "데쳐서 볶음·베이컨말이에 쓰는 초록 채소예요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=broccoli"
+      }
+    },
+    "상추": {
+      "file": "lettuce.png",
+      "category": "야채·과일",
+      "title": "Lettuce",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "쌈·겉절이·비빔밥에 바로 쓰는 잎채소예요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=lettuce"
+      }
+    },
+    "청경채": {
+      "file": "bok-choy.png",
+      "category": "야채·과일",
+      "title": "Bok choy",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "볶음·완자탕에 넣으면 아삭한 식감이 살아요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=bok%20choy"
+      }
+    },
+    "숙주": {
+      "file": "mung-bean-sprouts.png",
+      "category": "야채·과일",
+      "title": "Mung bean sprouts",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "볶음우동·전골에 넣는 아삭한 나물이에요. 콩나물과 달라요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=mung%20bean%20sprouts"
+      }
+    },
+    "소면": {
+      "file": "somen.png",
+      "category": "고기·해산물",
+      "title": "Somen noodles",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "잔치국수·비빔국수에 쓰는 가는 국수예요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=somen%20noodles"
+      }
+    },
+    "우동면": {
+      "file": "udon.png",
+      "category": "고기·해산물",
+      "title": "Udon noodles",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "볶음우동·김치우동을 바로 만들 수 있는 냉장 면이에요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=udon%20noodles"
+      }
+    },
+    "라면": {
+      "file": "ramen.png",
+      "category": "고기·해산물",
+      "title": "Instant ramen",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "라볶이처럼 면 사리로 쓰는 자취 필수 재료예요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=instant%20ramen"
+      }
+    },
+    "당면": {
+      "file": "glass-noodles.png",
+      "category": "고기·해산물",
+      "title": "Glass noodles",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "잡채·잡채밥에 꼭 필요한 면이에요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=glass%20noodles"
+      }
+    },
+    "김": {
+      "file": "gim.png",
+      "category": "고기·해산물",
+      "title": "Seaweed (gim)",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "주먹밥·컵밥에 두르거나 김자반으로 먹어요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=seaweed"
+      }
+    },
+    "전분": {
+      "file": "starch.png",
+      "category": "양념류",
+      "title": "Starch",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "볶음 소스 농도를 맞추고 완자를 뭉칠 때 써요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=starch"
+      }
+    },
+    "카레가루": {
+      "file": "curry-powder.png",
+      "category": "양념류",
+      "title": "Curry powder",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.8",
+      "reference": {
+        "why": "카레라이스·카레소스에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=curry%20powder"
       }
     }
   }

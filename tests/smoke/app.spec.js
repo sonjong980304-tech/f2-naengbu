@@ -530,7 +530,7 @@ test('직접 쓰기 칸을 누르면 재료 후보 패널이 열리고, 눌러�
   await page.locator('#manualInput').click();                                  // 빈 칸을 누르면 열림
   const picker = page.locator('.manual-picker');
   await expect(picker).toBeVisible();
-  await expect(picker.locator('[data-act="manualPick"]')).toHaveCount(57);
+  await expect(picker.locator('[data-act="manualPick"]')).toHaveCount(Object.values(FRIDGE.master).flat().length);
   await expect(page.locator('#manualInput')).toBeFocused();                     // 키보드(포커스)가 닫히지 않음
 
   // 후보를 누르면 목록에 담기고, 누른 버튼은 화면에서 그대로

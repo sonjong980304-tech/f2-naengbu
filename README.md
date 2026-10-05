@@ -28,7 +28,9 @@
 | **S-04 피드백 선택** | "매운 건 싫어요", "조리 시간이 너무 길어요" 등 6가지 중 여러 개를 골라요. |
 | **S-05 재추천** | 피드백을 반영해 새 카드 3장을 골라요. 조건에 맞는 게 없으면 조건을 조금 풀어서 추천하고, 그래도 없으면 이전에 추천한 레시피를 보여 줘요. [이전 레시피로 돌아가기]로 직전 단계로 돌아갈 수 있어요. |
 
-처음 열 때는 냉장고 문이 열리며 재료가 튀어나오는 시작 화면이 나와요(탭을 처음 열 때만, 누르면 건너뜀).
+처음 열 때는 냉장고 문이 열리며 재료가 튀어나오는 3D 시작 화면이 나와요(탭을 처음 열 때만, 누르면 건너뜀).
+
+버튼을 누르면 짧은 **효과음**이 나요(일반 버튼 "톡", 재료 넣기 "뽁", 해 먹었어요 "띠링", 별로예요 "툭"). 음원 파일 없이 Web Audio로 만들고, 화면 오른쪽 위 스피커 버튼으로 끄면 그 기기에 기억돼요.
 
 ## 추천은 어떻게 하나요 (AI API 없이 규칙 기반)
 
@@ -42,8 +44,8 @@
 
 ## 데이터
 
-- **레시피 131개** — 팀이 작성한 39개 + 식품의약품안전처·농림축산식품부 공공데이터 92개(자취방에서 하기 어려운 요리는 걸러 내고 "~해요"체 4단계로 다듬음, `source`에 원본 id 기록)
-- **마스터 재료 57종** — 재료 이름은 이 표기만 써요
+- **레시피 158개** — 팀이 작성한 39개 + 식품의약품안전처·농림축산식품부 공공데이터 119개(자취방에서 하기 어려운 요리는 걸러 내고 "~해요"체 4단계로 다듬음, `source`에 원본 id 기록)
+- **마스터 재료 69종** — 재료 이름은 이 표기만 써요. 마늘(통·깐마늘)과 다진마늘은 다른 재료로 봐요. 밥·물·식용유(올리브유 포함)는 집에 있다고 봐요
 - **꿀조합 팁** — 실제 사용자 글이 아니라 팀이 작성한 **예시 데이터**예요. 좋아요는 각자 기기 화면에서만 반영돼요.
 - 냉장고 재료는 이 기기의 브라우저(localStorage)에만 저장되고, 영수증 사진은 기기 밖으로 보내지 않아요.
 
@@ -97,8 +99,9 @@ npx playwright test
 ├── js/logic.js     추천 로직 순수 함수 (window.Logic)
 ├── js/receipt.js   영수증 글자 → 재료 매칭 순수 함수 (window.Receipt)
 ├── js/ocr.js       영수증 사진 보정 (window.ReceiptOCR)
+├── js/sound.js     효과음 (window.Sound)
 ├── data/           copy · recipes · sample-fridge · icon-map · ingredient-info (.json 원본 + .js)
-├── icons/          ingredients/ 재료 아이콘 PNG 57개, svg-source/, CREDITS.txt
+├── icons/          ingredients/ 재료 아이콘 PNG 69개, svg-source/, CREDITS.txt
 ├── docs/           plan.md(계획) · DESIGN.md(디자인 규칙) · prompts.md(AI 활용 기록) · reference/
 ├── tests/          Playwright 테스트
 └── CLAUDE.md       이 저장소에서 작업하는 Claude Code 규칙
@@ -114,6 +117,6 @@ npx playwright test
 
 ## 출처
 
-- **재료 아이콘** — 26개는 [Flaticon](https://www.flaticon.com) 무료 라이선스(출처 표기 필요, 앱 화면 1 아래 "아이콘 출처"와 [`icons/CREDITS.txt`](icons/CREDITS.txt)에 표기), 31개는 팀 자체 제작
+- **재료 아이콘** — 26개는 [Flaticon](https://www.flaticon.com) 무료 라이선스(출처 표기 필요, 앱 화면 1 아래 "아이콘 출처"와 [`icons/CREDITS.txt`](icons/CREDITS.txt)에 표기), 43개는 팀 자체 제작
 - **레시피** — 식품의약품안전처·농림축산식품부 공공데이터를 바탕으로 다듬었어요
 - **글꼴** — Pretendard, Noto Serif KR (SIL Open Font License)
