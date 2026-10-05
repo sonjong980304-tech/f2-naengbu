@@ -19,8 +19,8 @@
 |---|---|
 | `index.html` | **통합 시안 v1.3을 그대로 복사**. 화면 1~5가 이미 동작 (데이터·아이콘이 파일 안에 내장, 392KB) |
 | 기준 원본 | `docs/reference/내냉부_통합시안_v1.3.html` (고치지 않고 보관) |
-| 데이터 | `data/copy.json`, `recipes.json`(39개), `sample-fridge.json`(마스터 40종), `icon-map.json` |
-| 아이콘 | `icons/ingredients/` PNG 40개(1.1MB), `CREDITS.txt`, `svg-source/` |
+| 데이터 | `data/copy.json`, `recipes.json`(131개), `sample-fridge.json`(마스터 57종), `icon-map.json` |
+| 아이콘 | `icons/ingredients/` PNG 57개, `CREDITS.txt`, `svg-source/` |
 | 규칙 문서 | `CLAUDE.md` (가이드 보완 반영), `docs/plan.md`(이 문서) |
 | 없음 | `css/`, `js/`, `js/logic.js`, `data/*.js`, `tests/`, `docs/prompts.md`, `.vercelignore`, Vercel 연결 |
 

@@ -47,7 +47,7 @@
   - 꿀조합은 `recipes.json`의 시드 데이터만 써요
   - 기획안 5-6의 맛 방향·조리도구·기타 의견 입력 → 구현하지 않음 (copy.json의 6개 칩만)
 - 모든 화면 문구는 `copy.json`에서 불러와요. 코드에 문구를 직접 쓰지 않아요
-- 재료 이름은 `sample-fridge.json`의 마스터 40종 표기만 써요
+- 재료 이름은 `sample-fridge.json`의 마스터 57종 표기만 써요
 - 화면에 이모지 문자는 쓰지 않아요 (재료는 PNG 아이콘, UI 아이콘은 Lucide)
 
 ## 4. 데이터 불러오기와 저장
@@ -141,7 +141,7 @@
 ├── css/                스타일 (app.css = 디자인 토큰 + 화면 스타일)
 ├── js/                 화면·기능 코드 (logic.js = 추천 로직 순수 함수)
 ├── data/               copy, recipes, sample-fridge, icon-map (.json 원본 + .js)
-├── icons/              ingredients/ (PNG 40개), svg-source/, CREDITS.txt
+├── icons/              ingredients/ (PNG 57개), svg-source/, CREDITS.txt
 ├── docs/               DESIGN.md, plan.md, prompts.md, reference/ (통합 시안, 재료 레퍼런스) (배포 제외)
 ├── tests/              Playwright 로직·스모크 테스트, package.json (배포 제외)
 ├── .vercelignore       배포 제외 목록

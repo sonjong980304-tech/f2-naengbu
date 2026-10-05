@@ -1,8 +1,8 @@
 /* data/icon-map.json에서 자동 생성. 직접 고치지 말고 JSON을 고친 뒤 cd tests && node tools/sync-data.js */
 window.ICON_MAP = {
-  "_note": "재료 이름 → 아이콘 파일. 파일은 public/icons/ingredients/ 에 있어요. Flaticon 아이콘(source 있음)은 앱 안에 출처를 보여 줘야 해요. license가 own인 v1.2 추가 14종은 팀 자체 제작이라 출처 표기가 필요 없어요. Flaticon으로 바꾸려면 reference.flaticonSearch에서 고른 뒤 title·author·source를 채우고 license를 지워요.",
+  "_note": "재료 이름 → 아이콘 파일. 파일은 public/icons/ingredients/ 에 있어요. Flaticon 아이콘(source 있음)은 앱 안에 출처를 보여 줘야 해요. license가 own인 v1.2 추가 14종과 v1.5 추가 7종, v1.6 추가 10종은 팀 자체 제작이라 출처 표기가 필요 없어요. Flaticon으로 바꾸려면 reference.flaticonSearch에서 고른 뒤 title·author·source를 채우고 license를 지워요.",
   "basePath": "icons/ingredients/",
-  "license": "Flaticon Free (attribution required) + 자체 제작 14종",
+  "license": "Flaticon Free (attribution required) + 자체 제작 31종",
   "licenseUrl": "https://www.flaticon.com",
   "icons": {
     "대파": {
@@ -367,6 +367,227 @@ window.ICON_MAP = {
       "reference": {
         "why": "버터간장계란밥처럼 재료 2~3개로 끝나는 요리에 핵심",
         "flaticonSearch": "https://www.flaticon.com/search?word=butter"
+      }
+    },
+    "무": {
+      "file": "radish.png",
+      "category": "야채·과일",
+      "title": "White radish",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.5",
+      "reference": {
+        "why": "무생채·무나물·쇠고기무국처럼 자취 반찬과 국에 자주 쓰여요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=white%20radish"
+      }
+    },
+    "오이": {
+      "file": "cucumber.png",
+      "category": "야채·과일",
+      "title": "Cucumber",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.5",
+      "reference": {
+        "why": "오이무침·오이냉국 같은 빠른 반찬에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=cucumber"
+      }
+    },
+    "파프리카": {
+      "file": "paprika.png",
+      "category": "야채·과일",
+      "title": "Bell pepper",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.5",
+      "reference": {
+        "why": "볶음·덮밥·무침에 색과 단맛을 더해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=bell%20pepper"
+      }
+    },
+    "쇠고기": {
+      "file": "beef.png",
+      "category": "고기·해산물",
+      "title": "Beef",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.5",
+      "reference": {
+        "why": "쇠고기무국·불고기덮밥 등 공공데이터 레시피에서 가장 많이 쓰이는 고기예요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=beef"
+      }
+    },
+    "우유": {
+      "file": "milk.png",
+      "category": "고기·해산물",
+      "title": "Milk",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.5",
+      "reference": {
+        "why": "오믈렛·수프·계란찜을 부드럽게 만드는 기본 재료예요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=milk"
+      }
+    },
+    "생크림": {
+      "file": "fresh-cream.png",
+      "category": "고기·해산물",
+      "title": "Fresh cream",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.5",
+      "reference": {
+        "why": "감자수프·크림 요리에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=fresh%20cream"
+      }
+    },
+    "들기름": {
+      "file": "perilla-oil.png",
+      "category": "양념류",
+      "title": "Perilla oil",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.5",
+      "reference": {
+        "why": "깻잎조림·나물 볶음에 고소한 맛을 내요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=perilla%20oil"
+      }
+    },
+    "가지": {
+      "file": "eggplant.png",
+      "category": "야채·과일",
+      "title": "Eggplant",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "가지볶음·가지무침 등 공공데이터 반찬에 많이 쓰여요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=eggplant"
+      }
+    },
+    "부추": {
+      "file": "chives.png",
+      "category": "야채·과일",
+      "title": "Chives",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "부추전·부추무침, 고기 요리 곁들임에 쓰여요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=chives"
+      }
+    },
+    "배추": {
+      "file": "napa-cabbage.png",
+      "category": "야채·과일",
+      "title": "Napa cabbage",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "배추된장국·배추전처럼 국과 반찬에 쓰여요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=napa%20cabbage"
+      }
+    },
+    "시금치": {
+      "file": "spinach.png",
+      "category": "야채·과일",
+      "title": "Spinach",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "시금치나물·시금치된장국에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=spinach"
+      }
+    },
+    "닭고기": {
+      "file": "chicken.png",
+      "category": "고기·해산물",
+      "title": "Chicken",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "닭볶음탕·찜닭처럼 닭가슴살이 아닌 부위를 쓰는 요리에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=chicken"
+      }
+    },
+    "오징어": {
+      "file": "squid.png",
+      "category": "고기·해산물",
+      "title": "Squid",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "오징어볶음·오징어무국에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=squid"
+      }
+    },
+    "고등어": {
+      "file": "mackerel.png",
+      "category": "고기·해산물",
+      "title": "Mackerel",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "고등어구이·고등어조림에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=mackerel"
+      }
+    },
+    "떡": {
+      "file": "rice-cake.png",
+      "category": "고기·해산물",
+      "title": "Rice cake",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "떡볶이·떡국 등에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=rice%20cake"
+      }
+    },
+    "파스타": {
+      "file": "pasta.png",
+      "category": "고기·해산물",
+      "title": "Pasta",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "토마토 파스타·볶음 파스타 같은 자취 단골 요리에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=pasta"
+      }
+    },
+    "밀가루": {
+      "file": "flour.png",
+      "category": "양념류",
+      "title": "Flour",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.6",
+      "reference": {
+        "why": "호박전·부침개·수제비처럼 반죽과 튀김옷에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=flour"
       }
     }
   }

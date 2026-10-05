@@ -7,7 +7,7 @@ const FRIDGE = require(path.join(__dirname, '..', '..', 'data', 'sample-fridge.j
 const MASTER = Object.values(FRIDGE.master).flat();
 
 test.describe('ingredient-info.json', () => {
-  test('마스터 40종이 모두 있고, 표기가 같고, 순서도 마스터와 같음', () => {
+  test('마스터 57종이 모두 있고, 표기가 같고, 순서도 마스터와 같음', () => {
     const names = Object.keys(INFO.items);
     expect(names).toEqual(MASTER);
   });
