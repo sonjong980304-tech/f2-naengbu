@@ -1,0 +1,372 @@
+{
+  "_note": "재료 이름 → 아이콘 파일. 파일은 public/icons/ingredients/ 에 있어요. Flaticon 아이콘(source 있음)은 앱 안에 출처를 보여 줘야 해요. license가 own인 v1.2 추가 14종은 팀 자체 제작이라 출처 표기가 필요 없어요. Flaticon으로 바꾸려면 reference.flaticonSearch에서 고른 뒤 title·author·source를 채우고 license를 지워요.",
+  "basePath": "/icons/ingredients/",
+  "license": "Flaticon Free (attribution required) + 자체 제작 14종",
+  "licenseUrl": "https://www.flaticon.com",
+  "icons": {
+    "대파": {
+      "file": "green-onion.png",
+      "category": "야채·과일",
+      "title": "Green onion",
+      "author": "dreamicons",
+      "source": "https://cdn-icons-png.flaticon.com/512/8782/8782373.png"
+    },
+    "양파": {
+      "file": "onion.png",
+      "category": "야채·과일",
+      "title": "Onion",
+      "author": "imaginationlol",
+      "source": "https://cdn-icons-png.flaticon.com/512/4835/4835813.png"
+    },
+    "마늘": {
+      "file": "garlic.png",
+      "category": "야채·과일",
+      "title": "Garlic",
+      "author": "BomSymbols",
+      "source": "https://cdn-icons-png.flaticon.com/512/3196/3196983.png"
+    },
+    "당근": {
+      "file": "carrot.png",
+      "category": "야채·과일",
+      "title": "Carrot",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/1041/1041355.png"
+    },
+    "감자": {
+      "file": "potato.png",
+      "category": "야채·과일",
+      "title": "Potato",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/1652/1652127.png"
+    },
+    "김치": {
+      "file": "kimchi.png",
+      "category": "야채·과일",
+      "title": "Kimchi",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/2072/2072857.png"
+    },
+    "애호박": {
+      "file": "zucchini.png",
+      "category": "야채·과일",
+      "title": "Zucchini",
+      "author": "Design View",
+      "source": "https://cdn-icons-png.flaticon.com/512/17859/17859908.png"
+    },
+    "버섯": {
+      "file": "mushroom.png",
+      "category": "야채·과일",
+      "title": "Mushroom",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/616/616593.png"
+    },
+    "사과": {
+      "file": "apple.png",
+      "category": "야채·과일",
+      "title": "Apple",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/415/415733.png"
+    },
+    "스팸": {
+      "file": "spam.png",
+      "category": "고기·해산물",
+      "title": "Spam",
+      "author": "Smashicons",
+      "source": "https://cdn-icons-png.flaticon.com/512/2742/2742200.png"
+    },
+    "참치캔": {
+      "file": "canned-tuna.png",
+      "category": "고기·해산물",
+      "title": "Canned food",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/405/405560.png"
+    },
+    "계란": {
+      "file": "egg.png",
+      "category": "고기·해산물",
+      "title": "Egg",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/837/837560.png"
+    },
+    "두부": {
+      "file": "tofu.png",
+      "category": "고기·해산물",
+      "title": "Tofu",
+      "author": "justicon",
+      "source": "https://cdn-icons-png.flaticon.com/512/2079/2079307.png"
+    },
+    "어묵": {
+      "file": "fish-cake.png",
+      "category": "고기·해산물",
+      "title": "Fish cake",
+      "author": "Nhor Phai",
+      "source": "https://cdn-icons-png.flaticon.com/512/2090/2090187.png"
+    },
+    "돼지고기": {
+      "file": "pork.png",
+      "category": "고기·해산물",
+      "title": "Pork",
+      "author": "popo2021",
+      "source": "https://cdn-icons-png.flaticon.com/512/9367/9367652.png"
+    },
+    "닭가슴살": {
+      "file": "chicken-breast.png",
+      "category": "고기·해산물",
+      "title": "Chicken breast",
+      "author": "surang",
+      "source": "https://cdn-icons-png.flaticon.com/512/5572/5572000.png"
+    },
+    "새우": {
+      "file": "shrimp.png",
+      "category": "고기·해산물",
+      "title": "Shrimp",
+      "author": "Good Ware",
+      "source": "https://cdn-icons-png.flaticon.com/512/3071/3071050.png"
+    },
+    "소시지": {
+      "file": "sausage.png",
+      "category": "고기·해산물",
+      "title": "Sausage",
+      "author": "Smashicons",
+      "source": "https://cdn-icons-png.flaticon.com/512/1406/1406895.png"
+    },
+    "고추장": {
+      "file": "gochujang.png",
+      "category": "양념류",
+      "title": "Gochujang",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/12663/12663706.png"
+    },
+    "간장": {
+      "file": "soy-sauce.png",
+      "category": "양념류",
+      "title": "Soy sauce",
+      "author": "Smashicons",
+      "source": "https://cdn-icons-png.flaticon.com/512/1471/1471289.png"
+    },
+    "설탕": {
+      "file": "sugar.png",
+      "category": "양념류",
+      "title": "Sugar cube",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/2774/2774012.png"
+    },
+    "소금": {
+      "file": "salt.png",
+      "category": "양념류",
+      "title": "Salt",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/8080/8080408.png"
+    },
+    "참기름": {
+      "file": "sesame-oil.png",
+      "category": "양념류",
+      "title": "Oil bottle",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/4986/4986905.png"
+    },
+    "마요네즈": {
+      "file": "mayonnaise.png",
+      "category": "양념류",
+      "title": "Mayonnaise",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/859/859275.png"
+    },
+    "케첩": {
+      "file": "ketchup.png",
+      "category": "양념류",
+      "title": "Ketchup",
+      "author": "Triberion",
+      "source": "https://cdn-icons-png.flaticon.com/512/2821/2821793.png"
+    },
+    "된장": {
+      "file": "doenjang.png",
+      "category": "양념류",
+      "title": "Doenjang jjigae",
+      "author": "Magnific",
+      "source": "https://cdn-icons-png.flaticon.com/512/13459/13459915.png"
+    },
+    "청양고추": {
+      "file": "cheongyang-pepper.png",
+      "category": "야채·과일",
+      "title": "Cheongyang pepper",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "찌개·라면에 한두 개만 넣어도 맛이 확 살아나는 자취 필수 매운맛",
+        "flaticonSearch": "https://www.flaticon.com/search?word=green%20chili%20pepper"
+      }
+    },
+    "양배추": {
+      "file": "cabbage.png",
+      "category": "야채·과일",
+      "title": "Cabbage",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "한 통 사면 오래가고 볶음·덮밥·샐러드에 두루 쓰여요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=cabbage"
+      }
+    },
+    "콩나물": {
+      "file": "bean-sprouts.png",
+      "category": "야채·과일",
+      "title": "Bean sprouts",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "1,000원대로 싸지만 2~3일이면 상해서 임박 재료 추천과 궁합이 좋아요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=bean%20sprouts"
+      }
+    },
+    "깻잎": {
+      "file": "perilla-leaf.png",
+      "category": "야채·과일",
+      "title": "Perilla leaf",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "쌈·전·볶음에 향을 더해 주고 금방 시들어서 빨리 써야 해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=perilla%20leaf"
+      }
+    },
+    "토마토": {
+      "file": "tomato.png",
+      "category": "야채·과일",
+      "title": "Tomato",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "계란과 함께 볶으면 5분 요리, 그냥 먹어도 되는 재료",
+        "flaticonSearch": "https://www.flaticon.com/search?word=tomato"
+      }
+    },
+    "베이컨": {
+      "file": "bacon.png",
+      "category": "고기·해산물",
+      "title": "Bacon",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "양배추·계란과 잘 맞고 기름이 나와 식용유가 거의 필요 없어요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=bacon"
+      }
+    },
+    "치즈": {
+      "file": "cheese.png",
+      "category": "고기·해산물",
+      "title": "Cheese",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "슬라이스 치즈 한 장으로 볶음밥·계란말이·라면이 업그레이드돼요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=cheese"
+      }
+    },
+    "만두": {
+      "file": "dumpling.png",
+      "category": "고기·해산물",
+      "title": "Dumpling",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "냉동실 단골 재료. 만둣국·군만두로 바로 한 끼",
+        "flaticonSearch": "https://www.flaticon.com/search?word=dumpling"
+      }
+    },
+    "맛살": {
+      "file": "crab-stick.png",
+      "category": "고기·해산물",
+      "title": "Crab stick",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "싸고 손질이 필요 없어 볶음밥·샐러드에 바로 넣어요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=crab%20stick"
+      }
+    },
+    "고춧가루": {
+      "file": "red-pepper-powder.png",
+      "category": "양념류",
+      "title": "Red pepper powder",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "고추장 없이도 국·볶음에 칼칼한 맛을 내요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=chili%20powder"
+      }
+    },
+    "굴소스": {
+      "file": "oyster-sauce.png",
+      "category": "양념류",
+      "title": "Oyster sauce",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "한 숟갈로 볶음 요리 맛이 정리되는 자취생 만능 소스",
+        "flaticonSearch": "https://www.flaticon.com/search?word=oyster%20sauce"
+      }
+    },
+    "후추": {
+      "file": "black-pepper.png",
+      "category": "양념류",
+      "title": "Black pepper",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "고기·계란 잡내를 잡아 주는 기본 양념",
+        "flaticonSearch": "https://www.flaticon.com/search?word=black%20pepper"
+      }
+    },
+    "식초": {
+      "file": "vinegar.png",
+      "category": "양념류",
+      "title": "Vinegar",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "무침·샐러드의 새콤한 맛, 양배추 샐러드에 필요해요",
+        "flaticonSearch": "https://www.flaticon.com/search?word=vinegar%20bottle"
+      }
+    },
+    "버터": {
+      "file": "butter.png",
+      "category": "양념류",
+      "title": "Butter",
+      "author": "내냉부 콘텐츠팀 (자체 제작)",
+      "source": null,
+      "license": "own",
+      "addedIn": "v1.2",
+      "reference": {
+        "why": "버터간장계란밥처럼 재료 2~3개로 끝나는 요리에 핵심",
+        "flaticonSearch": "https://www.flaticon.com/search?word=butter"
+      }
+    }
+  }
+}
