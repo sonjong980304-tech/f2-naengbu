@@ -96,6 +96,53 @@ test('재료 타일: 신선도 바(당근 14일 중 9일 = 64%)와 기한 지난
   await expect(leek.locator('img')).toHaveCSS('opacity', '0.6');
 });
 
+test('새로 넣은 재료도 유통기한 순으로 (냉장고 칸 · 냉장고 속 재료 목록)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await open(page);
+  await page.click('[data-act="fill"]');
+  await page.click('[data-act="toggleAdd"]');
+  await page.click('[data-act="chip"][data-n="감자"]');   // D-7로 들어감
+
+  const shelf = await page.locator('.shelf').first().locator('.tile .tile-name').allTextContents();
+  expect(shelf.indexOf('감자')).toBe(shelf.indexOf('양배추') + 1);   // 양배추 D-6 다음, 당근 D-9 앞
+  expect(shelf.indexOf('당근')).toBe(shelf.indexOf('감자') + 1);
+
+  const rows = page.locator('.row');
+  const days = await rows.evaluateAll(els => els.map(el => {
+    const d = el.querySelector('input[type="date"]').value;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return Math.round((new Date(d + 'T00:00:00') - today) / 864e5);
+  }));
+  expect(days).toEqual([...days].sort((a, b) => a - b));
+  const names = await rows.locator('.rowtop b').allTextContents();
+  expect(names[names.length - 1]).not.toBe('감자');
+});
+
+test('해 먹은 뒤 화면: 안내 칸만 크게, 리드·빈 결과 문구는 숨김', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await open(page);
+  await page.evaluate(() => {
+    const iso = n => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return d.toLocaleDateString('sv-SE'); };
+    localStorage.setItem('naengbu:fridge:v1', JSON.stringify([
+      { name: '대파', category: '야채·과일', expiryDate: iso(1) }, { name: '김치', category: '야채·과일', expiryDate: iso(2) },
+    ]));
+  });
+  await page.reload();
+  await page.click('[data-act="go"][data-mode="urgent"]');
+  await expect(page.locator('.lead')).toBeVisible();
+  await page.locator('[data-act="pick"]').first().click();
+  await page.locator('[data-act="cook"]').first().click();
+  const notice = page.locator('.notice[role="status"]');
+  await expect(notice).toContainText('만들었어요');
+  await expect(notice.locator('.notice-ico')).toBeVisible();
+  await expect(page.locator('.lead')).toHaveCount(0);
+  await expect(page.getByText('아직 추천할 요리가 없어요', { exact: false })).toHaveCount(0);
+  // 되돌리면 원래 화면으로
+  await page.click('[data-act="undo"]');
+  await expect(page.locator('.lead')).toBeVisible();
+  await expect(page.locator('article.card').first()).toBeVisible();
+});
+
 test('화면 5: 이전 레시피로 돌아가기', async ({ page }) => {
   const errors = watchErrors(page);
   await page.setViewportSize({ width: 390, height: 900 });

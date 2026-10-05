@@ -194,7 +194,11 @@ h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.3;lette
 .notice.warn{border-color:var(--urgent-bg);background:var(--urgent-bg)}
 .notice.warn p{color:var(--urgent-ink);font-weight:500}
 .notice.soft{background:var(--surface-card);border-color:var(--surface-card);color:var(--body);font-weight:500;font-size:14px}
-.notice[role="status"]{background:var(--surface-dark);border-color:var(--surface-dark);color:var(--on-dark)}
+.notice[role="status"]{background:var(--surface-dark);border-color:var(--surface-dark);color:var(--on-dark);padding:28px 24px;margin:8px 0 24px;border-radius:var(--r-2xl);font-size:17px;font-weight:500;line-height:1.65}
+.notice-ico{display:grid;place-items:center;width:56px;height:56px;margin-bottom:16px;border-radius:50%;background:rgba(22,163,74,.25);color:#86EFAC}
+.notice-ico svg.lucide{width:28px;height:28px}
+.notice[role="status"] p+.btn{margin-top:24px}
+h1+.notice[role="status"]{margin-top:24px}
 .notice[role="status"] .btn-s{background:transparent;border-color:rgba(244,250,246,.3);color:var(--on-dark)}
 .notice[role="status"] .btn-s svg.lucide{color:var(--on-dark)}
 .empty{text-align:center;padding:40px 0 24px}
