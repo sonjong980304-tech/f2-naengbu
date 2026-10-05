@@ -670,7 +670,11 @@ function splash(){
   const items = [['대파',-80,-112,-12],['계란',-30,-146,8],['두부',30,-146,-6],['당근',82,-108,14],['김치',-98,-46,-8],['토마토',98,-42,10]];
   const el = document.createElement('div');
   el.id = 'splash'; el.setAttribute('aria-hidden', 'true');
-  el.innerHTML = '<div class="sp-stage"><div class="sp-fridge"><div class="sp-door"></div></div>'
+  // CSS 3D: 두께 있는 냉장고 상자(안쪽 벽·옆면·윗면·선반) + 경첩으로 열리는 문 + 바닥 그림자
+  el.innerHTML = '<div class="sp-scene"><div class="sp-floor"></div><div class="sp-box">'
+    + '<i class="sp-f sp-back"></i><i class="sp-f sp-left"></i><i class="sp-f sp-right"></i><i class="sp-f sp-top"></i><i class="sp-f sp-bottom"></i>'
+    + '<i class="sp-shelf s1"></i><i class="sp-shelf s2"></i><i class="sp-glow"></i>'
+    + '<div class="sp-door"><i class="sp-door-in"></i><i class="sp-door-edge"></i><i class="sp-door-out"></i></div></div>'
     + items.map(([n,x,y,r], i) => {
         const m = ICON_MAP.icons[n], src = m && ICON_SRC[m.file];
         return src ? `<span class="sp-item" style="--x:${x}px;--y:${y}px;--r:${r}deg;--d:${(0.8 + i * 0.09).toFixed(2)}s"><img src="${src}" alt=""></span>` : '';

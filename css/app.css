@@ -271,20 +271,39 @@ h1+.notice[role="status"]{margin-top:24px}
 /* 시작 화면 (처음 열 때만, 눌러서 건너뛰기) */
 #splash{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;background:var(--canvas);cursor:pointer;transition:opacity .5s ease,transform .5s ease}
 #splash.out{opacity:0;transform:translateY(-16px);pointer-events:none}
-.sp-stage{position:relative;width:240px;height:220px;display:flex;align-items:flex-end;justify-content:center}
-.sp-fridge{position:relative;width:118px;height:168px;border:2.5px solid var(--primary);border-radius:18px;background:radial-gradient(circle at 50% 40%,var(--primary-tint) 0,var(--card) 70%);perspective:1400px}
-.sp-fridge::before,.sp-fridge::after{content:"";position:absolute;left:14px;right:14px;height:0;border-top:2px solid var(--hairline)}
-.sp-fridge::before{top:58px}
-.sp-fridge::after{top:110px}
-.sp-door{position:absolute;inset:-2.5px;border:2.5px solid var(--primary);border-radius:18px;background:var(--surface-card);transform-origin:left center;animation:spDoor .7s cubic-bezier(.6,0,.3,1) .45s forwards}
-.sp-door::before{content:"";position:absolute;top:30px;right:14px;width:5px;height:34px;border-radius:3px;background:var(--primary)}
-.sp-door::after{content:"";position:absolute;left:0;right:0;top:62px;border-top:2.5px solid var(--primary)}
-.sp-item{position:absolute;left:50%;bottom:70px;width:46px;height:46px;margin-left:-23px;opacity:0;transform:translate(0,0) scale(.3);animation:spPop .7s cubic-bezier(.2,.9,.3,1.25) forwards;animation-delay:var(--d)}
-.sp-item img{width:100%;height:100%;object-fit:contain}
+/* 3D 냉장고: 상자 각 면을 preserve-3d로 세워요 */
+.sp-scene{--W:124px;--H:172px;--D:64px;--T:9px;position:relative;width:260px;height:250px;perspective:900px;perspective-origin:50% 25%}
+.sp-floor{position:absolute;left:50%;bottom:14px;width:230px;height:50px;margin-left:-115px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--ink) 24%,transparent),transparent);filter:blur(3px)}
+.sp-box{position:absolute;left:50%;bottom:38px;width:var(--W);height:var(--H);margin-left:calc(var(--W) / -2);transform-style:preserve-3d;animation:spTurn 2.4s cubic-bezier(.3,.6,.3,1) forwards}
+.sp-f,.sp-shelf,.sp-glow{position:absolute;left:50%;top:50%}
+.sp-back{width:var(--W);height:var(--H);margin:calc(var(--H) / -2) 0 0 calc(var(--W) / -2);transform:translateZ(calc(var(--D) / -2));border-radius:14px;background:radial-gradient(circle at 50% 38%,var(--primary-tint),var(--surface-card) 78%)}
+.sp-left,.sp-right{width:var(--D);height:var(--H);margin:calc(var(--H) / -2) 0 0 calc(var(--D) / -2);border:2.5px solid var(--primary);border-radius:12px}
+.sp-left{transform:rotateY(-90deg) translateZ(calc(var(--W) / 2));background:var(--surface-card)}
+.sp-right{transform:rotateY(90deg) translateZ(calc(var(--W) / 2));background:var(--surface-strong)}
+.sp-top,.sp-bottom{width:var(--W);height:var(--D);margin:calc(var(--D) / -2) 0 0 calc(var(--W) / -2);border:2.5px solid var(--primary);border-radius:12px}
+.sp-top{transform:rotateX(90deg) translateZ(calc(var(--H) / 2));background:var(--card)}
+.sp-bottom{transform:rotateX(-90deg) translateZ(calc(var(--H) / 2));background:var(--surface-strong)}
+.sp-shelf{width:calc(var(--W) - 12px);height:calc(var(--D) - 10px);margin:calc((var(--D) - 10px) / -2) 0 0 calc((var(--W) - 12px) / -2);border:1.5px solid var(--hairline);border-radius:4px;background:var(--card)}
+.sp-shelf.s1{transform:translateY(-24px) rotateX(90deg)}
+.sp-shelf.s2{transform:translateY(30px) rotateX(90deg)}
+.sp-glow{width:var(--W);height:var(--H);margin:calc(var(--H) / -2) 0 0 calc(var(--W) / -2);transform:translateZ(calc(var(--D) / 2 - 2px));background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 30%,transparent),transparent 70%);opacity:0;animation:spGlow .6s ease .75s forwards}
+.sp-door{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:left center;transform:translateZ(calc(var(--D) / 2));animation:spDoor3d .85s cubic-bezier(.6,0,.25,1) .4s forwards}
+.sp-door-in,.sp-door-out{position:absolute;inset:0;border:2.5px solid var(--primary);border-radius:16px}
+.sp-door-in{background:var(--card)}
+.sp-door-out{transform:translateZ(var(--T));background:linear-gradient(135deg,var(--card),var(--surface-card))}
+.sp-door-out::before{content:"";position:absolute;top:30px;right:14px;width:6px;height:36px;border-radius:3px;background:var(--primary)}
+.sp-door-out::after{content:"";position:absolute;left:0;right:0;top:64px;border-top:2.5px solid var(--primary)}
+.sp-door-edge{position:absolute;top:0;right:0;width:var(--T);height:100%;transform-origin:right center;transform:rotateY(90deg);border-radius:4px;background:var(--primary)}
+.sp-item{position:absolute;left:50%;bottom:118px;width:50px;height:50px;margin-left:-25px;opacity:0;transform:translate3d(0,0,-50px) scale(.2);filter:drop-shadow(0 14px 8px color-mix(in srgb,var(--ink) 26%,transparent));animation:spPop3d .8s cubic-bezier(.2,.9,.3,1.2) forwards;animation-delay:var(--d)}
+.sp-item img{width:100%;height:100%;object-fit:contain;animation:spFloat 1.5s ease-in-out infinite;animation-delay:calc(var(--d) + .8s)}
 .sp-title{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:-0.6px;color:var(--ink);opacity:0;transform:translateY(10px);animation:spRise .6s ease 1.25s forwards}
 .sp-tag{margin-top:-18px;font-size:14px;color:var(--muted);opacity:0;transform:translateY(8px);animation:spRise .6s ease 1.45s forwards}
-@keyframes spDoor{to{transform:rotateY(-70deg)}}
-@keyframes spPop{60%{opacity:1}to{opacity:1;transform:translate(var(--x),var(--y)) scale(1) rotate(var(--r))}}
+@keyframes spTurn{from{transform:rotateX(-6deg) rotateY(-42deg)}to{transform:rotateX(-13deg) rotateY(-20deg)}}
+@keyframes spDoor3d{to{transform:translateZ(calc(var(--D) / 2)) rotateY(-96deg)}}
+@media (max-width:360px){.sp-scene{transform:scale(.86)}}
+@keyframes spGlow{to{opacity:1}}
+@keyframes spPop3d{55%{opacity:1}to{opacity:1;transform:translate3d(var(--x),var(--y),70px) rotate(var(--r)) scale(1)}}
+@keyframes spFloat{50%{transform:translateY(-5px) rotateY(22deg)}}
 @keyframes spRise{to{opacity:1;transform:none}}
 #app.enter{animation:appIn .5s ease both}
 @keyframes appIn{from{opacity:0;transform:translateY(10px)}}
