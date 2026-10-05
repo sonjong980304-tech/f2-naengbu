@@ -34,4 +34,7 @@ test.describe('resolveTyped (영수증 인식 후 직접 쓰기)', () => {
     expect(resolve('   ').status).toBe('empty');
     expect(resolve('').status).toBe('empty');
   });
+  test('자바스크립트 내장 이름(constructor 등)은 재료로 보지 않음', () => {
+    for (const s of ['constructor', 'toString', 'hasOwnProperty', '__proto__']) expect(resolve(s).status).toBe('none');
+  });
 });

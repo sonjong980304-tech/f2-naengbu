@@ -1,6 +1,6 @@
 /* data/icon-map.json에서 자동 생성. 직접 고치지 말고 JSON을 고친 뒤 cd tests && node tools/sync-data.js */
 window.ICON_MAP = {
-  "_note": "재료 이름 → 아이콘 파일. 파일은 public/icons/ingredients/ 에 있어요. Flaticon 아이콘(source 있음)은 앱 안에 출처를 보여 줘야 해요. license가 own인 v1.2 추가 14종과 v1.5 추가 7종, v1.6 추가 10종은 팀 자체 제작이라 출처 표기가 필요 없어요. Flaticon으로 바꾸려면 reference.flaticonSearch에서 고른 뒤 title·author·source를 채우고 license를 지워요.",
+  "_note": "재료 이름 → 아이콘 파일. 파일은 icons/ingredients/ 에 있어요. Flaticon 아이콘(source 있음)은 앱 안에 출처를 보여 줘야 해요. license가 own인 v1.2 추가 14종과 v1.5 추가 7종, v1.6 추가 10종은 팀 자체 제작이라 출처 표기가 필요 없어요. Flaticon으로 바꾸려면 reference.flaticonSearch에서 고른 뒤 title·author·source를 채우고 license를 지워요.",
   "basePath": "icons/ingredients/",
   "license": "Flaticon Free (attribution required) + 자체 제작 31종",
   "licenseUrl": "https://www.flaticon.com",

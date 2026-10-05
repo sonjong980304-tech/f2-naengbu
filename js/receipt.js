@@ -27,7 +27,7 @@
   function resolveTyped(text, items, masterOrder) {
     const key = normalizeLine(text);
     if (!key) return { status: 'empty', name: null, candidates: [] };
-    if (items[key]) return { status: 'ok', name: key, candidates: [key] };
+    if (Object.prototype.hasOwnProperty.call(items, key)) return { status: 'ok', name: key, candidates: [key] };
     const found = matchIngredients(key, items, masterOrder);
     if (found.length === 1) return { status: 'ok', name: found[0], candidates: found };
     if (found.length > 1) return { status: 'ambiguous', name: null, candidates: found };
