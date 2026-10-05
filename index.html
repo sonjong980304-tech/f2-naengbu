@@ -20,6 +20,8 @@
 <script src="data/recipes.js"></script>
 <script src="data/sample-fridge.js"></script>
 <script src="data/icon-map.js"></script>
+<script src="js/receipt.js"></script>
+<script src="data/ingredient-info.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600&display=swap">
@@ -71,7 +73,7 @@ const S = {
   sel: new Set(),            // 화면 1 선택 재료 (저장 안 함)
   view: 'fridge',            // fridge | list | feedback | re
   mode: 'urgent',            // urgent | picked
-  addOpen: false, addTab: 'manual', receiptPreview: null, receiptDone: false, creditsOpen: false,
+  addOpen: false, addTab: 'manual', receiptPreview: null, receipt: { status: 'idle', progress: 0, count: 0 }, creditsOpen: false,
   listLoading: false, pickedName: null, notice: null, lastRemoved: null,
   openSteps: new Set(), liked: {},
   session: { rejected: [], round: 1 },
@@ -206,6 +208,66 @@ function cookedNotice(){
   return `<div class="notice" role="status"><span class="notice-ico" aria-hidden="true">${lu('chef-hat')}</span><p>${esc(S.notice)}</p><button class="btn btn-s" data-act="undo">${lu('undo-2')}${esc(t('card.undo'))}</button></div>`;
 }
 
+/* ───────── 영수증 OCR (브라우저 안에서만, 사진은 밖으로 보내지 않아요) ───────── */
+const OCR_LIB = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+const OCR_OPTS = {
+  workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
+  corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',
+  langPath: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/kor@1.0.0/4.0.0_best_int'
+};
+const OCR_TIMEOUT_MS = 25000;   // 준비(라이브러리·한국어 데이터)와 인식 단계에 각각 적용
+const withTimeout = (pr, ms) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
+function loadScript(src){
+  return new Promise((ok, no) => {
+    if (window.Tesseract) return ok();
+    const el = document.createElement('script');
+    el.src = src; el.onload = ok; el.onerror = () => no(new Error('load'));
+    document.head.appendChild(el);
+  });
+}
+async function recognizeReceipt(image, onProgress){
+  if (window.__naengbuOcrStub) return window.__naengbuOcrStub(image, onProgress);   // 스모크 테스트 전용
+  let worker = null;
+  try {
+    worker = await withTimeout((async () => {
+      await loadScript(OCR_LIB);
+      return window.Tesseract.createWorker('kor', 1, { ...OCR_OPTS, logger: m => {
+        if (typeof m.progress !== 'number') return;
+        onProgress(Math.round(m.status === 'recognizing text' ? 30 + m.progress * 70 : m.progress * 30));
+      } });
+    })(), OCR_TIMEOUT_MS);
+    const { data } = await withTimeout(worker.recognize(image), OCR_TIMEOUT_MS);
+    return data.text;
+  } finally {
+    if (worker) worker.terminate();
+  }
+}
+async function runScan(){
+  S.receipt = { status: 'reading', progress: 0, count: 0 }; render();
+  const onProgress = n => {
+    if (S.receipt.status !== 'reading' || n <= S.receipt.progress) return;
+    S.receipt.progress = Math.min(n, 99); render();
+  };
+  try {
+    const text = await recognizeReceipt(S.receiptPreview, onProgress);
+    const names = window.Receipt.matchIngredients(text, window.INGREDIENT_INFO.items, Object.values(CATS).flat());
+    names.forEach(n => { const d = window.INGREDIENT_INFO.items[n].defaultShelfDays; addItem(n, d, true, d); });
+    saveFridge();
+    S.receipt = names.length ? { status: 'found', progress: 100, count: names.length } : { status: 'none', progress: 0, count: 0 };
+  } catch(e){
+    S.receipt = { status: 'fail', progress: 0, count: 0 };
+  }
+  render();
+}
+function receiptStatus(){
+  const R = S.receipt;
+  if (R.status === 'reading') return `<div class="receipt-progress" role="status"><p class="cap">${esc(t('fridge.receiptScanning',{n:R.progress}))}</p><span class="fresh-track" aria-hidden="true"><i style="width:${R.progress}%"></i></span></div>`;
+  if (R.status === 'found') return `<p class="cap receipt-note done" role="status">${esc(t('fridge.receiptFound',{n:R.count}))}</p>`;
+  if (R.status === 'sample') return `<p class="cap receipt-note done" role="status">${esc(t('fridge.receiptDone'))}</p>`;
+  if (R.status === 'none' || R.status === 'fail') return `<div class="receipt-fallback" role="alert"><p class="cap">${esc(t(R.status === 'none' ? 'fridge.receiptNone' : 'fridge.receiptFail'))}</p><button class="btn btn-s" data-act="receiptSample">${esc(t('fridge.receiptSample'))}</button></div>`;
+  return `<p class="cap receipt-note">${esc(t('fridge.receiptPrivacy'))}</p>`;
+}
+
 /* ───────── 화면 1 · 내 냉장고 ───────── */
 function viewFridge(){
   S.sel = new Set(L.selectableSelection([...S.sel], fridgeNow()));
@@ -249,8 +311,8 @@ function viewFridge(){
         <label for="receiptFile" class="drop">${S.receiptPreview
           ? `<img src="${S.receiptPreview}" alt="${esc(t('fridge.receiptPreviewAlt'))}"><span>${esc(t('fridge.receiptChange'))}</span>`
           : `${lu('camera')}<span>${esc(t('fridge.receiptUpload'))}</span>`}</label>
-        <button class="btn btn-s" data-act="scan" style="margin-top:16px"${S.receiptPreview ? '' : ' disabled'}>${esc(t('fridge.receiptScan'))}</button>
-        <p class="cap receipt-note${S.receiptDone ? ' done' : ''}" role="status">${esc(t(S.receiptDone ? 'fridge.receiptDone' : 'fridge.receiptDemoNote'))}</p></div>`;
+        <button class="btn btn-s" data-act="scan" style="margin-top:16px"${S.receiptPreview && S.receipt.status !== 'reading' ? '' : ' disabled'}>${esc(t('fridge.receiptScan'))}</button>
+        ${receiptStatus()}</div>`;
     }
     h += `<div class="panel"><h2 class="list-title">${esc(t('fridge.listTitle'))}<span class="cap">${esc(t('fridge.listCount',{n:items.length}))}</span></h2>`;
     h += items.length ? items.slice().sort((a,b) => a.d - b.d).map(x => {
@@ -403,7 +465,8 @@ document.addEventListener('click', ev => {
     case 'tab': S.addTab = b.dataset.tab; render(); break;
     case 'chip': find(n) ? removeItem(n) : addItem(n, 7); saveFridge(); render(); break;
     case 'remove': removeItem(n); saveFridge(); render(); break;
-    case 'scan': FRIDGE_DATA.receiptDemo.items.forEach(x => addItem(x.name, x.daysLeft, true)); S.receiptDone = true; saveFridge(); render(); break;
+    case 'scan': runScan(); break;
+    case 'receiptSample': FRIDGE_DATA.receiptDemo.items.forEach(x => addItem(x.name, x.daysLeft, true)); S.receipt = { status: 'sample', progress: 100, count: 5 }; saveFridge(); render(); break;
     case 'credits': S.creditsOpen = !S.creditsOpen; render(); break;
     case 'go':
       S.mode = b.dataset.mode; S.pickedName = null; S.notice = null; S.openSteps.clear(); resetSession(); S.reHistory = [];
@@ -465,7 +528,7 @@ document.addEventListener('change', ev => {
     if (x && /^\d{4}-\d{2}-\d{2}$/.test(el.value)){ x.expiryDate = el.value; saveFridge(); render(); }
   } else if (el.id === 'receiptFile' && el.files[0]){
     const r = new FileReader();
-    r.onload = () => { S.receiptPreview = r.result; S.receiptDone = false; render(); };   // 영수증 이미지는 저장하지 않아요
+    r.onload = () => { S.receiptPreview = r.result; S.receipt = { status: 'idle', progress: 0, count: 0 }; render(); };   // 영수증 이미지는 저장하지 않아요
     r.readAsDataURL(el.files[0]);
   }
 });

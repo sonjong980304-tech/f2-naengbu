@@ -23,6 +23,7 @@
   - Pretendard: `https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css`
   - Lucide: `lucide@0.462.0` UMD
   - Noto Serif KR (제목용 명조, Google Fonts): `https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600&display=swap`
+  - Tesseract.js (영수증 OCR, [재료 인식하기]를 누를 때만 불러옴): `https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js`, worker `.../tesseract.js@5.1.1/dist/worker.min.js`, core `https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1`, 한국어 데이터 `https://cdn.jsdelivr.net/npm/@tesseract.js-data/kor@1.0.0/4.0.0_best_int`
 - 로그인, 외부 DB(Supabase, Firebase 등), 외부 API 호출은 쓰지 않아요
 - 모바일(375~390px)과 PC 화면에서 모두 깨지지 않아야 해요. 기준 폭 390px, 최대 480px 가운데 정렬
 - 배포에서 빼는 파일은 루트 `.vercelignore`로 관리해요 (docs/, tests/, CLAUDE.md, icons/svg-source/)
@@ -42,7 +43,7 @@
   - 색·글꼴·모서리는 Claude DESIGN.md 구조에 **신선한 초록 테마**를 입힌 `docs/DESIGN.md`를 따름 (Primary #1E7A4C, 바탕 #F3F8F2). D-day 배지 색(초록·주황·빨강)은 규칙이라 그대로 둠
   - 시작 화면(냉장고 애니메이션)은 탭을 처음 열 때만 보여 주고, 누르면 건너뜀
   - 화면 5에서 새 레시피가 0장이면 "이전에 추천한 레시피" 구역에 바로 앞 단계 카드를 보여 줌
-  - 영수증 첨부는 OCR 없이, 사진과 관계없이 정해진 샘플 재료 5개를 넣는 시연 방식으로 만들어요
+  - 영수증 첨부는 브라우저 안에서 Tesseract.js로 읽어요(사진은 기기 밖으로 보내지 않음, 외부 API 아님). 찾은 글자를 `data/ingredient-info.json`의 별칭으로 마스터 재료와 맞추고(`js/receipt.js`), 유통기한은 재료별 기본 보관 일수로 넣은 뒤 사용자가 목록에서 확인·수정해요. 0개·오류·시간 초과면 [샘플 재료로 넣기 (시연용)]으로 기존 샘플 5개를 넣는 대체 경로를 보여요
   - 꿀조합은 `recipes.json`의 시드 데이터만 써요
   - 기획안 5-6의 맛 방향·조리도구·기타 의견 입력 → 구현하지 않음 (copy.json의 6개 칩만)
 - 모든 화면 문구는 `copy.json`에서 불러와요. 코드에 문구를 직접 쓰지 않아요
