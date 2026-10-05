@@ -274,3 +274,18 @@ h1+.notice[role="status"]{margin-top:24px}
 @keyframes spRise{to{opacity:1;transform:none}}
 #app.enter{animation:appIn .5s ease both}
 @keyframes appIn{from{opacity:0;transform:translateY(10px)}}
+
+/* 영수증 확인 목록 (승인해야 냉장고에 들어가요) */
+.pending{margin-top:16px;padding:14px;border-radius:var(--r-lg);background:var(--surface-soft);border:1px solid var(--hairline-soft)}
+.pending-title{display:flex;align-items:baseline;gap:8px;font-size:15px;font-weight:600;color:var(--ink)}
+.pending-lead{margin-top:4px;line-height:1.5}
+.pending-empty{margin-top:10px;color:var(--body)}
+.pend-row{display:grid;grid-template-columns:24px minmax(0,1fr) 44px;align-items:center;gap:6px 8px;padding:10px 0;border-top:1px solid var(--hairline)}
+.pending-lead+.pend-row{margin-top:8px}
+.pend-row select{height:40px;padding:0 10px;border:1px solid var(--hairline);border-radius:var(--r-sm);background:var(--card);color:var(--ink);font-size:15px;font-weight:600}
+.pend-row input[type="date"]{grid-column:2/3;height:36px;padding:0 10px;border:1px solid var(--hairline);border-radius:var(--r-sm);background:var(--card);color:var(--ink);font-size:14px}
+.pend-row select:focus,.pend-row input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--focus-ring-soft);outline:none}
+.pend-row .rm{margin:0}
+.pend-row .tag{grid-column:2/4;justify-self:start}
+.pend-dup{background:var(--warn-bg);color:var(--warn-ink)}
+.pending-actions{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:4px}

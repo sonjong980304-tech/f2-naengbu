@@ -51,6 +51,17 @@
     return selected.filter(n => usable.has(n));
   }
 
+  // 영수증 확인 목록 → 실제로 넣을 재료. 같은 재료는 처음 것만, 이미 냉장고에 있으면 빼고 알려 줘요
+  function planPendingAdd(pending, fridgeNames) {
+    const inFridge = new Set(fridgeNames), seen = new Set(), toAdd = [], skipped = [];
+    pending.forEach(p => {
+      if (seen.has(p.name)) return;
+      seen.add(p.name);
+      if (inFridge.has(p.name)) skipped.push(p.name); else toAdd.push(p);
+    });
+    return { toAdd, skipped };
+  }
+
   function fridgeSummary(fridge) {
     const names = list => list.slice().sort((a, b) => a.daysLeft - b.daysLeft).map(x => x.name);
     return {
@@ -208,7 +219,7 @@
 
   return {
     TAG_ORDER, RELAX_STEPS,
-    daysLeft, badgeLevel, ingredientScore, urgentNames, fridgeSummary, freshnessPercent, FRESH_SCALE_DAYS, selectableSelection,
+    daysLeft, badgeLevel, ingredientScore, urgentNames, fridgeSummary, freshnessPercent, FRESH_SCALE_DAYS, planPendingAdd, selectableSelection,
     buildContext, evaluate, isExposed, compareEvaluated, recommend,
     passTags, pickDiverse, rerecommend, nextSession, cookedRemoval,
     buildReason, buildChanged,

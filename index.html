@@ -73,7 +73,7 @@ const S = {
   sel: new Set(),            // 화면 1 선택 재료 (저장 안 함)
   view: 'fridge',            // fridge | list | feedback | re
   mode: 'urgent',            // urgent | picked
-  addOpen: false, addTab: 'manual', receiptPreview: null, receipt: { status: 'idle', progress: 0, count: 0 }, manual: { value: '', kind: '', msg: '' }, creditsOpen: false,
+  addOpen: false, addTab: 'manual', receiptPreview: null, receipt: { status: 'idle', progress: 0, count: 0 }, manual: { value: '', kind: '', msg: '' }, pending: [], creditsOpen: false,
   listLoading: false, pickedName: null, notice: null, lastRemoved: null,
   openSteps: new Set(), liked: {},
   session: { rejected: [], round: 1 },
@@ -245,7 +245,7 @@ async function recognizeReceipt(image, onProgress){
   }
 }
 async function runScan(){
-  S.receipt = { status: 'reading', progress: 0, count: 0 }; S.manual = { value: '', kind: '', msg: '' }; render();
+  S.receipt = { status: 'reading', progress: 0, count: 0 }; S.manual = { value: '', kind: '', msg: '' }; S.pending = []; render();
   const onProgress = n => {
     if (S.receipt.status !== 'reading' || n <= S.receipt.progress) return;
     S.receipt.progress = Math.min(n, 99); render();
@@ -253,8 +253,7 @@ async function runScan(){
   try {
     const text = await recognizeReceipt(S.receiptPreview, onProgress);
     const names = window.Receipt.matchIngredients(text, window.INGREDIENT_INFO.items, Object.values(CATS).flat());
-    names.forEach(n => { const d = window.INGREDIENT_INFO.items[n].defaultShelfDays; addItem(n, d, true, d); });
-    saveFridge();
+    S.pending = names.map(n => ({ name: n, expiryDate: addDays(window.INGREDIENT_INFO.items[n].defaultShelfDays), fromReceipt: true }));
     S.receipt = names.length ? { status: 'found', progress: 100, count: names.length } : { status: 'none', progress: 0, count: 0 };
   } catch(e){
     S.receipt = { status: 'fail', progress: 0, count: 0 };
@@ -277,20 +276,49 @@ function manualAdd(){
   const r = window.Receipt.resolveTyped(value, window.INGREDIENT_INFO.items, Object.values(CATS).flat());
   if (r.status === 'empty') return;
   if (r.status === 'ok' && find(r.name)) S.manual = { value, kind: 'warn', msg: t('fridge.manualExists', { name: r.name }) };
+  else if (r.status === 'ok' && S.pending.some(x => x.name === r.name)) S.manual = { value, kind: 'warn', msg: t('fridge.manualInList', { name: r.name }) };
   else if (r.status === 'ok'){
-    const d = window.INGREDIENT_INFO.items[r.name].defaultShelfDays;
-    addItem(r.name, d, false, d); saveFridge();
+    S.pending.push({ name: r.name, expiryDate: addDays(window.INGREDIENT_INFO.items[r.name].defaultShelfDays), fromReceipt: false });
     S.manual = { value: '', kind: 'ok', msg: t('fridge.manualAdded', { name: r.name }) };
   }
   else if (r.status === 'ambiguous') S.manual = { value, kind: 'warn', msg: t('fridge.manualAmbiguous', { list: r.candidates.join(', ') }) };
   else S.manual = { value, kind: 'warn', msg: t('fridge.manualNone') };
   renderAnchored('#manualInput', true);
 }
+/* 영수증 확인 목록: 인식·샘플·직접 쓰기 재료를 먼저 보여 주고, 승인해야 냉장고에 넣어요 */
+const REVIEW_STATES = ['found', 'none', 'fail', 'sample'];
+function pendingReview(){
+  if (!REVIEW_STATES.includes(S.receipt.status)) return '';
+  const inFridge = new Set(S.items.map(x => x.name));
+  let h = `<div class="pending"><h3 class="pending-title">${esc(t('fridge.reviewTitle'))}<span class="cap">${esc(t('fridge.listCount',{n:S.pending.length}))}</span></h3><p class="cap pending-lead">${esc(t('fridge.reviewLead'))}</p>`;
+  if (!S.pending.length) h += `<p class="cap pending-empty">${esc(t('fridge.reviewEmpty'))}</p>`;
+  h += S.pending.map((x, i) => `<div class="pend-row">${ingIcon(x.name)}`
+    + `<select data-pend-name="${i}" aria-label="${esc(t('fridge.reviewNameLabel',{name:x.name}))}">${CAT_ORDER.map(c => `<optgroup label="${esc(c)}">${CATS[c].map(n => `<option value="${esc(n)}"${n === x.name ? ' selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select>`
+    + `<button class="rm" data-act="pendRemove" data-i="${i}" aria-label="${esc(t('fridge.reviewRemove',{name:x.name}))}">${lu('x')}</button>`
+    + `<input type="date" data-pend-exp="${i}" value="${x.expiryDate}" aria-label="${esc(t('fridge.reviewExpiryLabel',{name:x.name}))}">`
+    + (inFridge.has(x.name) ? `<span class="tag pend-dup">${esc(t('fridge.reviewInFridge'))}</span>` : '') + `</div>`).join('');
+  return h + `</div>`;
+}
+function pendingActions(){
+  if (!REVIEW_STATES.includes(S.receipt.status)) return '';
+  const n = L.planPendingAdd(S.pending, S.items.map(x => x.name)).toAdd.length;
+  return `<div class="pending-actions"><button class="btn btn-p" data-act="pendConfirm"${n ? '' : ' disabled'}>${lu('check')}${esc(t('fridge.reviewConfirm',{n}))}</button>`
+    + `<button class="textbtn" data-act="pendCancel">${esc(t('fridge.reviewCancel'))}</button></div>`;
+}
+function confirmPending(){
+  const plan = L.planPendingAdd(S.pending, S.items.map(x => x.name));
+  plan.toAdd.forEach(x => { const d = daysLeft(x.expiryDate); addItem(x.name, d, x.fromReceipt, d); });
+  saveFridge();
+  S.receipt = { status: 'added', progress: 100, count: plan.toAdd.length, skipped: plan.skipped.length };
+  S.pending = []; S.manual = { value: '', kind: '', msg: '' };
+  renderAnchored('#addArea');
+}
 function receiptStatus(){
   const R = S.receipt;
   if (R.status === 'reading') return `<div class="receipt-progress" role="status"><p class="cap">${esc(t('fridge.receiptScanning',{n:R.progress}))}</p><span class="fresh-track" aria-hidden="true"><i style="width:${R.progress}%"></i></span></div>`;
   if (R.status === 'found') return `<p class="cap receipt-note done" role="status">${esc(t('fridge.receiptFound',{n:R.count}))}</p>`;
   if (R.status === 'sample') return `<p class="cap receipt-note done" role="status">${esc(t('fridge.receiptDone'))}</p>`;
+  if (R.status === 'added') return `<p class="cap receipt-note done" role="status">${esc(t('fridge.reviewAdded',{n:R.count}) + (R.skipped ? t('fridge.reviewSkipped',{n:R.skipped}) : ''))}</p>`;
   if (R.status === 'none' || R.status === 'fail') return `<div class="receipt-fallback" role="alert"><p class="cap">${esc(t(R.status === 'none' ? 'fridge.receiptNone' : 'fridge.receiptFail'))}</p><button class="btn btn-s" data-act="receiptSample">${esc(t('fridge.receiptSample'))}</button></div>`;
   return `<p class="cap receipt-note">${esc(t('fridge.receiptPrivacy'))}</p>`;
 }
@@ -339,7 +367,7 @@ function viewFridge(){
           ? `<img src="${S.receiptPreview}" alt="${esc(t('fridge.receiptPreviewAlt'))}"><span>${esc(t('fridge.receiptChange'))}</span>`
           : `${lu('camera')}<span>${esc(t('fridge.receiptUpload'))}</span>`}</label>
         <button class="btn btn-s" data-act="scan" style="margin-top:16px"${S.receiptPreview && S.receipt.status !== 'reading' ? '' : ' disabled'}>${esc(t('fridge.receiptScan'))}</button>
-        ${receiptStatus()}${manualEntry()}</div>`;
+        ${receiptStatus()}${pendingReview()}${manualEntry()}${pendingActions()}</div>`;
     }
     h += `<div class="panel"><h2 class="list-title">${esc(t('fridge.listTitle'))}<span class="cap">${esc(t('fridge.listCount',{n:items.length}))}</span></h2>`;
     h += items.length ? items.slice().sort((a,b) => a.d - b.d).map(x => {
@@ -504,7 +532,10 @@ document.addEventListener('click', ev => {
     case 'remove': removeItem(n); saveFridge(); renderAnchored('.list-title'); break;
     case 'scan': runScan(); break;
     case 'manualAdd': manualAdd(); break;
-    case 'receiptSample': FRIDGE_DATA.receiptDemo.items.forEach(x => addItem(x.name, x.daysLeft, true)); S.receipt = { status: 'sample', progress: 100, count: 5 }; saveFridge(); render(); break;
+    case 'receiptSample': S.pending = FRIDGE_DATA.receiptDemo.items.map(x => ({ name: x.name, expiryDate: addDays(x.daysLeft), fromReceipt: true })); S.receipt = { status: 'sample', progress: 100, count: S.pending.length }; renderAnchored('#addArea'); break;
+    case 'pendRemove': S.pending.splice(Number(b.dataset.i), 1); renderAnchored('.pending-title'); break;
+    case 'pendConfirm': confirmPending(); break;
+    case 'pendCancel': S.pending = []; S.receipt = { status: 'idle', progress: 0, count: 0 }; S.manual = { value: '', kind: '', msg: '' }; renderAnchored('#addArea'); break;
     case 'credits': S.creditsOpen = !S.creditsOpen; render(); break;
     case 'go':
       S.mode = b.dataset.mode; S.pickedName = null; S.notice = null; S.openSteps.clear(); resetSession(); S.reHistory = [];
@@ -565,12 +596,22 @@ document.addEventListener('keydown', ev => {
 document.addEventListener('input', ev => { if (ev.target.id === 'manualInput') S.manual.value = ev.target.value; });
 document.addEventListener('change', ev => {
   const el = ev.target;
+  if (el.matches('select[data-pend-name]')){
+    const i = Number(el.dataset.pendName), x = S.pending[i];
+    if (x){ x.name = el.value; x.expiryDate = addDays(window.INGREDIENT_INFO.items[el.value].defaultShelfDays); renderAnchored('[data-pend-name="' + i + '"]'); }   // 재료를 바꾸면 그 재료의 기본 보관 일수로
+    return;
+  }
+  if (el.matches('input[type="date"][data-pend-exp]')){
+    const x = S.pending[Number(el.dataset.pendExp)];
+    if (x && /^\d{4}-\d{2}-\d{2}$/.test(el.value)){ x.expiryDate = el.value; render(); }
+    return;
+  }
   if (el.matches('input[type="date"][data-exp]')){
     const x = find(el.dataset.exp);
     if (x && /^\d{4}-\d{2}-\d{2}$/.test(el.value)){ x.expiryDate = el.value; saveFridge(); renderAnchored('input[data-exp="' + CSS.escape(x.name) + '"]'); }
   } else if (el.id === 'receiptFile' && el.files[0]){
     const r = new FileReader();
-    r.onload = () => { S.receiptPreview = r.result; S.receipt = { status: 'idle', progress: 0, count: 0 }; S.manual = { value: '', kind: '', msg: '' }; render(); };   // 영수증 이미지는 저장하지 않아요
+    r.onload = () => { S.receiptPreview = r.result; S.receipt = { status: 'idle', progress: 0, count: 0 }; S.manual = { value: '', kind: '', msg: '' }; S.pending = []; render(); };   // 영수증 이미지는 저장하지 않아요
     r.readAsDataURL(el.files[0]);
   }
 });

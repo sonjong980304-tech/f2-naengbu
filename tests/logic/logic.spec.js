@@ -290,3 +290,20 @@ test.describe('buildReason · buildChanged (copy.json 템플릿)', () => {
     expect(Logic.buildChanged([], COPY)).toBe('');
   });
 });
+
+test.describe('planPendingAdd (영수증 확인 목록 → 냉장고에 넣을 재료)', () => {
+  const P = (name, expiryDate = '2026-10-12', fromReceipt = true) => ({ name, expiryDate, fromReceipt });
+  test('목록 순서대로 넣고, 같은 재료가 두 번이면 처음 것만', () => {
+    const r = Logic.planPendingAdd([P('대파'), P('두부', '2026-10-09'), P('대파', '2026-10-20', false)], []);
+    expect(r.toAdd).toEqual([P('대파'), P('두부', '2026-10-09')]);
+    expect(r.skipped).toEqual([]);
+  });
+  test('이미 냉장고에 있는 재료는 빼고 skipped로 알려 줌', () => {
+    const r = Logic.planPendingAdd([P('대파'), P('계란'), P('계란')], ['계란', '김치']);
+    expect(r.toAdd.map(x => x.name)).toEqual(['대파']);
+    expect(r.skipped).toEqual(['계란']);
+  });
+  test('빈 목록이면 아무것도 넣지 않음', () => {
+    expect(Logic.planPendingAdd([], ['김치'])).toEqual({ toAdd: [], skipped: [] });
+  });
+});

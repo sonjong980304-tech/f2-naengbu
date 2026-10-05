@@ -375,24 +375,80 @@ async function openReceiptTab(page, stubText) {
   await expect(page.locator('[data-act="scan"]')).toBeEnabled();
 }
 
-test('영수증 OCR: 인식한 재료가 기본 보관 일수로 들어가고 "영수증에서 인식" 태그', async ({ page }) => {
+const isoIn = (page, n) => page.evaluate(k => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + k); return d.toLocaleDateString('sv-SE'); }, n);
+const pendNames = page => page.locator('select[data-pend-name]').evaluateAll(els => els.map(e => e.value));
+
+test('영수증 OCR: 인식한 재료는 먼저 확인 목록에 나오고, [냉장고에 넣기]를 눌러야 들어감', async ({ page }) => {
   const errors = watchErrors(page);
   await openReceiptTab(page, '이마트\n풀무원 국산콩두부 300g 1 3,980\n깐대파 1봉 2,480\n무항생제 유정란 15구 6,990\n코카콜라 1.5L 3,200');
   await page.click('[data-act="scan"]');
   await expect(page.getByText('영수증에서 재료 3개를 찾았어요', { exact: false })).toBeVisible();
+  expect(await pendNames(page)).toEqual(['대파', '계란', '두부']);
+  await expect(page.locator('#manualInput')).toBeVisible();          // 빠진 재료 직접 쓰기도 같이
+  await expect(page.locator('.tile')).toHaveCount(0);                // 아직 냉장고에는 없음
+  await expect(page.locator('[data-act="pendConfirm"]')).toHaveText('냉장고에 넣기 (3)');
+
+  await page.click('[data-act="pendConfirm"]');
+  await expect(page.getByText('재료 3개를 냉장고에 넣었어요.', { exact: false })).toBeVisible();
   await expect(page.locator('.row .tag', { hasText: '영수증에서 인식' })).toHaveCount(3);
-  for (const n of ['대파', '두부', '계란']) await expect(page.locator(`.tile[data-n="${n}"]`)).toHaveCount(1);
   await expect(page.locator('.tile[data-n="대파"] .fresh-label')).toHaveText('D-7');   // 대파 기본 보관 7일
   await expect(page.locator('.tile[data-n="계란"] .fresh-label')).toHaveText('D-21');
+  await expect(page.locator('select[data-pend-name]')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
-test('영수증 OCR: 재료를 못 찾으면 샘플 재료로 넣기(시연용) 대체 경로', async ({ page }) => {
+test('영수증 확인 목록: 잘못 인식한 재료 이름·유통기한을 고치고 빼고 넣을 수 있음', async ({ page }) => {
+  await openReceiptTab(page, '깐대파 1봉\n풀무원 국산콩두부 300g\n무항생제 유정란 15구');
+  await page.click('[data-act="scan"]');
+  expect(await pendNames(page)).toEqual(['대파', '계란', '두부']);
+
+  await page.locator('select[data-pend-name="1"]').selectOption('양파');                       // 계란 → 양파 (기본 30일로 바뀜)
+  await expect(page.locator('input[data-pend-exp="1"]')).toHaveValue(await isoIn(page, 30));
+  await page.locator('input[data-pend-exp="2"]').fill(await isoIn(page, 3));                  // 두부 유통기한 3일 뒤로
+  await page.click('[data-act="pendRemove"][data-i="0"]');                                   // 대파 빼기
+  expect(await pendNames(page)).toEqual(['양파', '두부']);
+  await expect(page.locator('[data-act="pendConfirm"]')).toHaveText('냉장고에 넣기 (2)');
+
+  await page.click('[data-act="pendConfirm"]');
+  await expect(page.locator('.tile[data-n="양파"] .fresh-label')).toHaveText('D-30');
+  await expect(page.locator('.tile[data-n="두부"] .fresh-label')).toHaveText('D-3');
+  await expect(page.locator('.tile[data-n="대파"]')).toHaveCount(0);
+  await expect(page.locator('.tile[data-n="계란"]')).toHaveCount(0);
+});
+
+test('영수증 확인 목록: 이미 냉장고에 있는 재료는 표시하고 빼고 넣음, 취소하면 아무것도 안 들어감', async ({ page }) => {
+  await openReceiptTab(page, '깐대파 1봉\n풀무원 국산콩두부 300g');
+  await page.click('[data-act="toggleAdd"]');                     // 직접 입력 탭에서 대파를 먼저 넣어 둠
+  await page.click('[data-act="toggleAdd"]');
+  await page.click('[data-act="tab"][data-tab="manual"]');
+  await page.click('[data-act="chip"][data-n="대파"]');
+  await page.click('[data-act="tab"][data-tab="receipt"]');
+  await page.setInputFiles('#receiptFile', { name: 'receipt.png', mimeType: 'image/png', buffer: PNG_1PX });
+  await page.click('[data-act="scan"]');
+  await expect(page.locator('.pend-row', { hasText: '이미 냉장고에 있어서 넣지 않아요' })).toHaveCount(1);
+  await expect(page.locator('[data-act="pendConfirm"]')).toHaveText('냉장고에 넣기 (1)');
+  await page.click('[data-act="pendConfirm"]');
+  await expect(page.getByText('재료 1개를 냉장고에 넣었어요. 이미 있던 1개는 빼고 넣었어요.')).toBeVisible();
+
+  // 다시 인식 → 취소하면 아무것도 안 들어감
+  await page.setInputFiles('#receiptFile', { name: 'receipt.png', mimeType: 'image/png', buffer: PNG_1PX });
+  await page.click('[data-act="scan"]');
+  const tiles = await page.locator('.tile').count();
+  await page.click('[data-act="pendCancel"]');
+  await expect(page.locator('select[data-pend-name]')).toHaveCount(0);
+  await expect(page.locator('.tile')).toHaveCount(tiles);
+});
+
+test('영수증 OCR: 재료를 못 찾으면 샘플 재료(시연용)를 목록에 담고 승인하면 들어감', async ({ page }) => {
   await openReceiptTab(page, '코카콜라 1.5L\n봉투 50원\n합계 3,250');
   await page.click('[data-act="scan"]');
   await expect(page.getByText('영수증에서 재료를 찾지 못했어요', { exact: false })).toBeVisible();
+  await expect(page.locator('[data-act="pendConfirm"]')).toBeDisabled();
   await page.click('[data-act="receiptSample"]');
-  await expect(page.getByText('샘플 재료 5개를 냉장고에 넣었어요', { exact: false })).toBeVisible();
+  await expect(page.getByText('샘플 재료 5개를 목록에 담았어요', { exact: false })).toBeVisible();
+  await expect(page.locator('select[data-pend-name]')).toHaveCount(5);
+  await expect(page.locator('.tile')).toHaveCount(0);
+  await page.click('[data-act="pendConfirm"]');
   await expect(page.locator('.row .tag', { hasText: '영수증에서 인식' })).toHaveCount(5);
 });
 
@@ -403,8 +459,8 @@ test('영수증 OCR: 인식 오류가 나도 앱이 멈추지 않고 대체 경�
   await expect(page.locator('[data-act="receiptSample"]')).toBeVisible();
 });
 
-/* ───────── 영수증 인식 뒤 빠진 재료 직접 쓰기 ───────── */
-test('영수증 인식 뒤 직접 쓰기: 칸이 보이고, 별칭으로 넣고, 이미 있음·없는 재료·여러 재료 안내', async ({ page }) => {
+/* ───────── 영수증 인식 뒤 빠진 재료 직접 쓰기 (확인 목록에 담겨요) ───────── */
+test('영수증 인식 뒤 직접 쓰기: 별칭으로 목록에 담고, 이미 있음·없는 재료·여러 재료 안내', async ({ page }) => {
   const errors = watchErrors(page);
   await openReceiptTab(page, '풀무원 국산콩두부 300g 3,980\n깐대파 1봉 2,480');
   await expect(page.locator('#manualInput')).toHaveCount(0);   // 인식 전에는 없음
@@ -414,22 +470,22 @@ test('영수증 인식 뒤 직접 쓰기: 칸이 보이고, 별칭으로 넣고,
   await expect(input).toBeVisible();
   await expect(page.locator('#masterList option[value="계란"]')).toHaveCount(1);
 
-  // "달걀" + Enter → 계란 (영수증 태그 없음), 칸 비우고 포커스 유지, 칸 위치 그대로
+  // "달걀" + Enter → 계란이 목록에 담김(냉장고에는 아직 없음), 칸 비우고 포커스 유지, 칸 위치 그대로
   await input.scrollIntoViewIfNeeded();
   const before = await input.evaluate(el => el.getBoundingClientRect().top);
   await input.fill('달걀');
   await input.press('Enter');
-  await expect(page.locator('.manual-msg')).toHaveText('계란을(를) 냉장고에 넣었어요');
-  await expect(page.locator('.tile[data-n="계란"]')).toHaveCount(1);
-  await expect(page.locator('.row', { hasText: '계란' }).locator('.tag')).toHaveCount(0);
+  await expect(page.locator('.manual-msg')).toHaveText('계란을(를) 목록에 담았어요');
+  expect(await pendNames(page)).toEqual(['대파', '두부', '계란']);
+  await expect(page.locator('.tile[data-n="계란"]')).toHaveCount(0);
   await expect(page.locator('#manualInput')).toHaveValue('');
   await expect(page.locator('#manualInput')).toBeFocused();
   expect(Math.abs((await page.locator('#manualInput').evaluate(el => el.getBoundingClientRect().top)) - before)).toBeLessThanOrEqual(1);
 
-  // 이미 있는 재료 (버튼으로)
+  // 이미 목록에 있는 재료
   await page.locator('#manualInput').fill('두부');
   await page.click('[data-act="manualAdd"]');
-  await expect(page.locator('.manual-msg')).toHaveText('두부은(는) 이미 냉장고에 있어요');
+  await expect(page.locator('.manual-msg')).toHaveText('두부은(는) 이미 목록에 있어요');
   await expect(page.locator('#manualInput')).toHaveValue('두부');
 
   // 마스터에 없는 재료
@@ -441,15 +497,22 @@ test('영수증 인식 뒤 직접 쓰기: 칸이 보이고, 별칭으로 넣고,
   await page.locator('#manualInput').fill('양파 당근');
   await page.click('[data-act="manualAdd"]');
   await expect(page.locator('.manual-msg')).toHaveText('재료가 여러 개로 보여요(양파, 당근). 하나씩 넣어 주세요');
-  await expect(page.locator('.tile[data-n="양파"]')).toHaveCount(0);
+
+  // 승인하면 직접 쓴 계란은 영수증 태그 없이 들어감
+  await page.click('[data-act="pendConfirm"]');
+  await expect(page.locator('.tile[data-n="계란"]')).toHaveCount(1);
+  await expect(page.locator('.row', { hasText: '계란' }).locator('.tag')).toHaveCount(0);
+  await expect(page.locator('.row .tag', { hasText: '영수증에서 인식' })).toHaveCount(2);
   expect(errors).toEqual([]);
 });
 
-test('영수증 인식 실패해도 직접 쓰기 칸으로 넣을 수 있음', async ({ page }) => {
+test('영수증 인식 실패해도 직접 쓰기로 목록에 담아 넣을 수 있음', async ({ page }) => {
   await openReceiptTab(page, '__throw__');
   await page.click('[data-act="scan"]');
   await expect(page.locator('[data-act="receiptSample"]')).toBeVisible();
   await page.locator('#manualInput').fill('쪽파');
   await page.locator('#manualInput').press('Enter');
+  expect(await pendNames(page)).toEqual(['대파']);
+  await page.click('[data-act="pendConfirm"]');
   await expect(page.locator('.tile[data-n="대파"]')).toHaveCount(1);
 });
