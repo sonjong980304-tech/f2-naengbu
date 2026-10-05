@@ -118,6 +118,62 @@ test('새로 넣은 재료도 유통기한 순으로 (냉장고 칸 · 냉장고
   expect(names[names.length - 1]).not.toBe('감자');
 });
 
+test('재추천 로딩 중에는 뒤로 가기도 막히고, 회차는 2회차', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await open(page);
+  await page.click('[data-act="fill"]');
+  await page.click('[data-act="go"][data-mode="urgent"]');
+  await expect(page.locator('article.card').first()).toBeVisible();
+  await page.locator('[data-act="reject"]').first().click();
+  await page.click('[data-act="tag"][data-k="no_spicy"]');
+  await page.click('[data-act="submitFb"]');
+  const back = page.locator('[data-act="reBack"]');
+  await expect(back).toBeDisabled();
+  await back.click({ force: true });
+  await expect(page.locator('h1')).toHaveText('이번엔 이렇게 골라봤어요');
+  await expect(page.locator('article.card').first()).toBeVisible();
+  await expect(page.getByText('추천 2회차')).toBeVisible();
+  await expect(back).toBeEnabled();
+});
+
+test('기한 지난 재료는 고를 수 없고, 고른 재료 개수에서도 빠짐', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await open(page);
+  await page.evaluate(items => {
+    const iso = n => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return d.toLocaleDateString('sv-SE'); };
+    localStorage.setItem('naengbu:fridge:v1', JSON.stringify(items.map(x => ({ name: x.name, category: x.category, expiryDate: iso(x.daysLeft) }))));
+  }, FRIDGE.testFridges.expiredCase);
+  await page.reload();
+  const tofu = page.locator('.tile[data-n="두부"]');
+  await expect(tofu).toHaveAttribute('aria-disabled', 'true');
+  await tofu.click({ force: true });
+  await expect(tofu).toHaveAttribute('aria-pressed', 'false');
+  await expect(tofu.locator('.ck')).toHaveCount(0);
+  await page.locator('.tile[data-n="대파"]').click();
+  await page.locator('.tile[data-n="김치"]').click();
+  const goPicked = page.locator('[data-act="go"][data-mode="picked"]');
+  await expect(goPicked).toHaveText('고른 재료로 추천받기 (2)');
+
+  // 고른 재료가 날짜 변경으로 기한이 지나면 선택에서 빠짐
+  await page.click('[data-act="toggleAdd"]');
+  await page.locator('input[type="date"][data-exp="김치"]').fill(await page.evaluate(() => {
+    const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - 1); return d.toLocaleDateString('sv-SE');
+  }));
+  await expect(goPicked).toHaveText('고른 재료로 추천받기 (1)');
+  await expect(goPicked).toBeDisabled();
+});
+
+test('꿀조합은 예시 데이터임을 표기', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await open(page);
+  await page.click('[data-act="fill"]');
+  await page.click('[data-act="go"][data-mode="urgent"]');
+  const honey = page.locator('.box.honey').first();
+  await expect(honey.locator('.box-head')).toHaveText('꿀조합 팁 · 예시');
+  await expect(honey.locator('.honey-note')).toHaveText('팀이 직접 써 본 예시 팁이에요');
+  await expect(page.getByText('다른 유저 꿀조합')).toHaveCount(0);
+});
+
 test('해 먹은 뒤 화면: 안내 칸만 크게, 리드·빈 결과 문구는 숨김', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await open(page);
