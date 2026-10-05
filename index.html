@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>내 냉장고를 부탁해 · 통합 시안 v1.3</title>
+<title>내 냉장고를 부탁해</title>
 <!--
   내 냉장고를 부탁해 · 통합 시안 (화면 1~5)
   기준 문서: design.md v1.3 (콘텐츠팀 최종본)
@@ -228,18 +228,21 @@ function loadScript(src){
 async function recognizeReceipt(image, onProgress){
   if (window.__naengbuOcrStub) return window.__naengbuOcrStub(image, onProgress);   // 스모크 테스트 전용
   let worker = null;
+  const creating = (async () => {
+    await loadScript(OCR_LIB);
+    return window.Tesseract.createWorker('kor', 1, { ...OCR_OPTS, logger: m => {
+      if (typeof m.progress !== 'number') return;
+      onProgress(Math.round(m.status === 'recognizing text' ? 30 + m.progress * 70 : m.progress * 30));
+    } });
+  })();
   try {
-    worker = await withTimeout((async () => {
-      await loadScript(OCR_LIB);
-      return window.Tesseract.createWorker('kor', 1, { ...OCR_OPTS, logger: m => {
-        if (typeof m.progress !== 'number') return;
-        onProgress(Math.round(m.status === 'recognizing text' ? 30 + m.progress * 70 : m.progress * 30));
-      } });
-    })(), OCR_TIMEOUT_MS);
+    worker = await withTimeout(creating, OCR_TIMEOUT_MS);
     const { data } = await withTimeout(worker.recognize(image), OCR_TIMEOUT_MS);
     return data.text;
   } finally {
+    // 준비 단계에서 시간 초과가 나도, 늦게 만들어진 워커까지 정리해요
     if (worker) worker.terminate();
+    else creating.then(w => w.terminate(), () => {});
   }
 }
 async function runScan(){
