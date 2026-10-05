@@ -45,6 +45,11 @@
     return Math.round((left / totalDays) * 100);
   }
 
+  function selectableSelection(selected, fridge) {
+    const usable = new Set(fridge.filter(x => x.daysLeft >= 0).map(x => x.name));
+    return selected.filter(n => usable.has(n));
+  }
+
   function fridgeSummary(fridge) {
     const names = list => list.slice().sort((a, b) => a.daysLeft - b.daysLeft).map(x => x.name);
     return {
@@ -202,7 +207,7 @@
 
   return {
     TAG_ORDER, RELAX_STEPS,
-    daysLeft, badgeLevel, ingredientScore, urgentNames, fridgeSummary, freshnessPercent,
+    daysLeft, badgeLevel, ingredientScore, urgentNames, fridgeSummary, freshnessPercent, selectableSelection,
     buildContext, evaluate, isExposed, compareEvaluated, recommend,
     passTags, pickDiverse, rerecommend, nextSession, cookedRemoval,
     buildReason, buildChanged,

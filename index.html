@@ -190,7 +190,7 @@ function card(r, opt){
   h += `<details class="steps" data-steps="${esc(key)}"${S.openSteps.has(key) ? ' open' : ''}><summary>${esc(t('card.steps'))}${lu('chevron-down')}</summary><ol>${r.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></details>`;
   h += `<div class="box why"><div class="box-head">${lu('sparkles')}${esc(t('card.reasonLabel'))}</div><p>${esc(opt.reason)}</p></div>`;
   if (tips.length){
-    h += `<div class="box honey"><div class="box-head">${lu('lightbulb')}${esc(t('card.honeyLabel'))}</div>` + tips.map((tp,i) => {
+    h += `<div class="box honey"><div class="box-head">${lu('lightbulb')}${esc(t('card.honeyLabel'))}</div><p class="honey-note">${esc(t('card.honeyNote'))}</p>` + tips.map((tp,i) => {
       const lk = r.name + '#' + i, on = !!S.liked[lk], n = tp.helpfulCount + (on ? 1 : 0);
       return `<div class="tip"><span>${esc(tp.text)}</span><button class="like" data-act="like" data-key="${esc(lk)}" data-base="${tp.helpfulCount}" aria-pressed="${on}" aria-label="${esc(t('card.helpfulLabel',{n}))}">${lu('thumbs-up')}<b style="font-weight:500">${n}</b></button></div>`;
     }).join('') + `</div>`;
@@ -208,6 +208,7 @@ function cookedNotice(){
 
 /* ───────── 화면 1 · 내 냉장고 ───────── */
 function viewFridge(){
+  S.sel = new Set(L.selectableSelection([...S.sel], fridgeNow()));
   const items = S.items.map(x => ({ ...x, d: daysLeft(x.expiryDate) }));
   const sum = L.fridgeSummary(items.map(x => ({ name: x.name, daysLeft: x.d })));
   let h = `<header class="apphead">${lu('refrigerator')}${esc(t('app.title'))}</header>`;
@@ -227,7 +228,7 @@ function viewFridge(){
       if (!list.length) return;
       h += `<div class="shelf"><h3>${esc(t('fridge.' + SHELF_KEY[c]))}</h3><div class="tiles">` + list.map(x => {
         const on = S.sel.has(x.name);
-        return `<button class="tile${x.name.length >= 4 ? ' long' : ''}${x.d < 0 ? ' expired' : ''}" data-act="sel" data-n="${esc(x.name)}" aria-pressed="${on}">${on ? `<span class="ck">${lu('check')}</span>` : ''}${ingIcon(x.name, true)}<span class="tile-name">${esc(x.name)}</span>${freshBar(x)}</button>`;
+        return `<button class="tile${x.name.length >= 4 ? ' long' : ''}${x.d < 0 ? ' expired' : ''}" data-act="sel" data-n="${esc(x.name)}" aria-pressed="${on}"${x.d < 0 ? ' aria-disabled="true"' : ''}>${on ? `<span class="ck">${lu('check')}</span>` : ''}${ingIcon(x.name, true)}<span class="tile-name">${esc(x.name)}</span>${freshBar(x)}</button>`;
       }).join('') + `</div></div>`;
     });
   }
@@ -318,7 +319,7 @@ function viewFeedback(){
 
 /* ───────── 화면 5 · 피드백 반영 재추천 ───────── */
 function viewRe(){
-  let h = `<div class="topbar"><button class="back" data-act="reBack" aria-label="${esc(t('rerecommend.back'))}">${lu('chevron-left')}</button><span class="cap">${esc(t('rerecommend.round',{n:S.session.round}))}</span></div>`;
+  let h = `<div class="topbar"><button class="back" data-act="reBack" aria-label="${esc(t('rerecommend.back'))}"${S.re.loading ? ' disabled aria-disabled="true"' : ''}>${lu('chevron-left')}</button><span class="cap">${esc(t('rerecommend.round',{n:S.session.round}))}</span></div>`;
   h += `<h1>${esc(t('rerecommend.title'))}</h1><p class="lead">${esc(t('rerecommend.lead'))}</p>`;
   h += `<section class="fb" aria-label="${esc(t('rerecommend.reflectedLabel'))}"><p>${esc(t('rerecommend.reflectedLabel'))}</p><div class="chips">` +
     TAG_ORDER.filter(k => S.re.tags.includes(k)).map(k => `<span class="fb-chip">${esc(t('feedback.tags.' + k))}</span>`).join('') + `</div></section>`;
@@ -393,7 +394,11 @@ document.addEventListener('click', ev => {
   const a = b.dataset.act, n = b.dataset.n;
   switch (a){
     case 'fill': FRIDGE_DATA.sampleFridge.forEach(x => addItem(x.name, x.daysLeft, false, x.shelfDays)); saveFridge(); render(); break;
-    case 'sel': S.sel.has(n) ? S.sel.delete(n) : S.sel.add(n); render(); break;
+    case 'sel': {
+      const it = find(n);
+      if (!it || daysLeft(it.expiryDate) < 0) break;   // 기한 지난 재료는 고를 수 없어요
+      S.sel.has(n) ? S.sel.delete(n) : S.sel.add(n); render(); break;
+    }
     case 'toggleAdd': S.addOpen = !S.addOpen; render(); break;
     case 'tab': S.addTab = b.dataset.tab; render(); break;
     case 'chip': find(n) ? removeItem(n) : addItem(n, 7); saveFridge(); render(); break;
@@ -436,6 +441,7 @@ document.addEventListener('click', ev => {
     case 'fbBack': S.fb.tags = []; S.fb.error = false; go(S.fb.from); break;
     case 'again':
     case 'reBack':
+      if (S.re.loading) break;
       S.fb = { from: 're', targets: S.re.recipes.length ? S.re.recipes.map(x => x.r) : S.fb.targets, tags: [], error: false };
       go('feedback'); break;
     case 'prevRecipes': {

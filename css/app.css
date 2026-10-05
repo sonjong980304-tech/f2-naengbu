@@ -44,6 +44,7 @@ h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.3;lette
 .apphead svg.lucide{color:var(--primary);width:20px;height:20px}
 .topbar{display:flex;align-items:center;height:48px;margin:-4px 0 12px}
 .back{display:inline-grid;place-items:center;width:44px;height:44px;margin-left:-10px;border-radius:999px;border:1px solid var(--hairline);background:var(--card);color:var(--ink)}
+.back:disabled{opacity:.4;cursor:not-allowed}
 .back svg.lucide{width:22px;height:22px}
 .topbar .cap{margin-left:auto;padding:4px 12px;border-radius:999px;background:var(--surface-card);color:var(--body)}
 
@@ -86,7 +87,7 @@ h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.3;lette
 .tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px 10px;border-radius:var(--r-lg);border:1px solid var(--hairline-soft);background:var(--surface-soft);font-size:15px;font-weight:500;line-height:1.3;min-height:44px;transition:background-color .15s,border-color .15s,opacity .15s}
 .tile.long{font-size:13px}
 .tile[aria-pressed="true"]{background:var(--primary-tint);border-color:var(--accent);color:var(--primary-ink);font-weight:600}
-.tile.expired{border-color:var(--urgent-solid)}
+.tile.expired{border-color:var(--urgent-solid);cursor:not-allowed}
 .tile.expired>:not(.ck){opacity:.6}
 .fresh{display:flex;flex-direction:column;align-items:stretch;gap:4px;width:72%;margin-top:2px}
 .fresh-label{font-size:12px;font-weight:600;line-height:1;text-align:center}
@@ -178,6 +179,7 @@ h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.3;lette
 .honey{background:var(--honey-bg)}
 .honey .box-head{color:var(--honey-ink)}
 .honey .box-head svg.lucide{color:var(--honey)}
+.honey-note{margin:-2px 0 6px;font-size:12.5px;font-weight:500;color:var(--honey-ink)}
 .tip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0;color:var(--body)}
 .tip+.tip{border-top:1px solid rgba(217,164,0,.2)}
 .like{position:relative;display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border-radius:999px;border:1px solid rgba(217,164,0,.45);background:var(--card);font-size:13px;font-weight:600;white-space:nowrap}

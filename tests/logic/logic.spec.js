@@ -64,6 +64,16 @@ test.describe('freshnessPercent (신선도 바)', () => {
   });
 });
 
+test.describe('selectableSelection (고른 재료)', () => {
+  test('기한 지난 재료와 냉장고에 없는 재료는 고른 목록에서 빠짐', () => {
+    const fridge = [{ name: '두부', daysLeft: -1 }, { name: '대파', daysLeft: 0 }, { name: '김치', daysLeft: 20 }];
+    expect(Logic.selectableSelection(['두부', '대파', '김치', '계란'], fridge)).toEqual(['대파', '김치']);
+  });
+  test('고른 게 없으면 빈 목록', () => {
+    expect(Logic.selectableSelection([], [{ name: '김치', daysLeft: 3 }])).toEqual([]);
+  });
+});
+
 test.describe('fridgeSummary (요약 줄)', () => {
   test('3일 안(0~3일)과 기한 지남을 나눠서, 남은 일수가 적은 순으로', () => {
     const fridge = [
