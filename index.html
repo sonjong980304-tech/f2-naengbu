@@ -189,7 +189,7 @@ function card(r, opt){
   h += `<p class="cap meta">${esc(metaText(r))}</p>`;
   if (opt.changed) h += `<p class="changed">${esc(opt.changed)}</p>`;
   h += `<div class="ing">${chips(e)}</div>`;
-  h += `<details class="steps" data-steps="${esc(key)}"${S.openSteps.has(key) ? ' open' : ''}><summary>${esc(t('card.steps'))}${lu('chevron-down')}</summary><ol>${r.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></details>`;
+  h += `<details class="steps" data-steps="${esc(key)}"${S.openSteps.has(key) ? ' open' : ''}><summary><span class="steps-ico">${lu('book-open')}</span><span class="steps-label"><b class="when-closed">${esc(t('card.steps'))}</b><b class="when-open">${esc(t('card.stepsHide'))}</b><small>${esc(t('card.stepsCount',{n:r.steps.length}))}</small></span><span class="steps-chev">${lu('chevron-down')}</span></summary><ol>${r.steps.map(s => `<li>${esc(s)}</li>`).join('')}</ol></details>`;
   h += `<div class="box why"><div class="box-head">${lu('sparkles')}${esc(t('card.reasonLabel'))}</div><p>${esc(opt.reason)}</p></div>`;
   if (tips.length){
     h += `<div class="box honey"><div class="box-head">${lu('lightbulb')}${esc(t('card.honeyLabel'))}</div><p class="honey-note">${esc(t('card.honeyNote'))}</p>` + tips.map((tp,i) => {

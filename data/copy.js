@@ -110,7 +110,9 @@ window.COPY = {
     "cookedNoticeSeasoning": " (양념류는 그대로 둬요)",
     "undo": "되돌리기",
     "cookedNone": "없음",
-    "cookedDone": "해 먹었어요"
+    "cookedDone": "해 먹었어요",
+    "stepsHide": "조리 방법 접기",
+    "stepsCount": "{n}단계"
   },
   "reason": {
     "urgent": "임박한 {list}부터 먼저 쓸 수 있어요.",
