@@ -23,7 +23,7 @@ window.COPY = {
     "shelfProtein": "단백질 칸",
     "shelfDoor": "문 선반",
     "empty": "냉장고가 비어 있어요. 재료를 넣어 볼까요?",
-    "fillSample": "샘플 재료로 채워 보기",
+    "fillSample": "재료 채워 보기",
     "hint": "재료를 눌러 고르면, 고른 재료로 만들 수 있는 요리를 추천해 드려요.",
     "addOpen": "재료 넣기/빼기",
     "addClose": "재료 넣기/빼기 닫기",
