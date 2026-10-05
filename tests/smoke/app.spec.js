@@ -42,6 +42,11 @@ test('시작 화면: 누르면 바로 건너뜀', async ({ page }) => {
   await expect(page.locator('#splash')).toHaveCount(0, { timeout: 1500 });
 });
 
+test('화면 1 아래: 공공데이터 레시피 출처가 보임', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('.credits-note')).toContainText('식품의약품안전처·농림축산식품부 공공데이터');
+});
+
 async function noHorizontalScroll(page) {
   const [sw, cw] = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
   expect(sw).toBeLessThanOrEqual(cw);
@@ -82,6 +87,16 @@ test('재료 타일: 신선도 바(당근 14일 중 9일 = 64%)와 기한 지난
   await expect(carrot.locator('.fresh-label')).toHaveText('D-9');
   await expect(carrot.locator('.fresh-track i')).toHaveAttribute('style', 'width:64%');
   await expect(page.locator('.tile.expired')).toHaveCount(0);
+
+  // 유통기한을 바꾸면 바도 남은 일수에 맞게 바로 바뀜 (D-3 → 21%, D-20 → 100%)
+  await page.click('[data-act="toggleAdd"]');
+  const isoIn = n => page.evaluate(k => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + k); return d.toLocaleDateString('sv-SE'); }, n);
+  await page.locator('input[type="date"][data-exp="당근"]').fill(await isoIn(3));
+  await expect(carrot.locator('.fresh-label')).toHaveText('D-3');
+  await expect(carrot.locator('.fresh-track i')).toHaveAttribute('style', 'width:21%');
+  await page.locator('input[type="date"][data-exp="당근"]').fill(await isoIn(20));
+  await expect(carrot.locator('.fresh-track i')).toHaveAttribute('style', 'width:100%');
+  await page.click('[data-act="toggleAdd"]');
 
   await page.locator('input[type="date"][data-exp="대파"]').count().then(async n => {
     if (!n) await page.click('[data-act="toggleAdd"]');
@@ -268,9 +283,10 @@ test('화면 5: 새 레시피가 없으면 이전에 추천한 레시피를 보�
   await open(page);
   await page.evaluate(() => {
     const iso = n => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + n); return d.toLocaleDateString('sv-SE'); };
+    // 대파+만두: 맵지 않은 새 후보가 조건을 풀어도 0장인 조합 (만두를 쓰는 레시피가 적어 레시피가 늘어도 잘 안 바뀜)
     localStorage.setItem('naengbu:fridge:v1', JSON.stringify([
       { name: '대파', category: '야채·과일', expiryDate: iso(1), fromReceipt: false },
-      { name: '김치', category: '야채·과일', expiryDate: iso(2), fromReceipt: false },
+      { name: '만두', category: '고기·해산물', expiryDate: iso(2), fromReceipt: false },
     ]));
   });
   await page.reload();

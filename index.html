@@ -108,8 +108,7 @@ function badge(d){
   return `<span class="dd dd-${lv}"><span class="dot"></span>${esc(d === 0 ? t('badge.today') : t('badge.daysLeft',{n:d}))}</span>`;
 }
 function freshBar(x){
-  const total = daysLeft(x.expiryDate) - daysLeft(x.addedDate || iso(today0()));
-  const pct = L.freshnessPercent(x.d, total);
+  const pct = L.freshnessPercent(x.d);
   const lv = x.d < 0 ? 'x' : x.d <= 3 ? 'r' : x.d <= 7 ? 'o' : 'g';
   const label = x.d < 0 ? t('badge.expired') : x.d === 0 ? t('badge.today') : t('badge.daysLeft',{n:x.d});
   return `<span class="fresh fresh-${lv}"><span class="fresh-label">${esc(label)}</span><span class="fresh-track" aria-hidden="true"><i style="width:${pct}%"></i></span></span>`;
@@ -332,7 +331,7 @@ function viewFridge(){
   if (S.creditsOpen){
     h += `<ul>` + Object.values(ICON_MAP.icons).filter(v => v.source).map(v => `<li><a href="${esc(v.source)}" target="_blank" rel="noopener">${esc(t('app.iconCreditsLine',{iconTitle:v.title, author:v.author}))}</a></li>`).join('') + `</ul>`;
   }
-  h += `</div>`;
+  h += `<p class="credits-note">${esc(t('app.recipeCredits'))}</p></div>`;
   return { html: h };
 }
 

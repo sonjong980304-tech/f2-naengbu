@@ -39,10 +39,11 @@
     return list.map(x => x.name);
   }
 
-  function freshnessPercent(left, totalDays) {
+  // 모든 재료에 같은 기준을 써서 바 길이가 남은 일수와 그대로 맞게 해요 (3일=21%, 7일=50%, 14일 이상=100%)
+  const FRESH_SCALE_DAYS = 14;
+  function freshnessPercent(left) {
     if (left <= 0) return 0;
-    if (totalDays <= 0 || left >= totalDays) return 100;
-    return Math.round((left / totalDays) * 100);
+    return Math.round((Math.min(left, FRESH_SCALE_DAYS) / FRESH_SCALE_DAYS) * 100);
   }
 
   function selectableSelection(selected, fridge) {
@@ -207,7 +208,7 @@
 
   return {
     TAG_ORDER, RELAX_STEPS,
-    daysLeft, badgeLevel, ingredientScore, urgentNames, fridgeSummary, freshnessPercent, selectableSelection,
+    daysLeft, badgeLevel, ingredientScore, urgentNames, fridgeSummary, freshnessPercent, FRESH_SCALE_DAYS, selectableSelection,
     buildContext, evaluate, isExposed, compareEvaluated, recommend,
     passTags, pickDiverse, rerecommend, nextSession, cookedRemoval,
     buildReason, buildChanged,

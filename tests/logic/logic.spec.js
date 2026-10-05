@@ -48,19 +48,24 @@ test.describe('urgentNames', () => {
   });
 });
 
-test.describe('freshnessPercent (신선도 바)', () => {
-  test('전체 기간 중 남은 비율: 14일 중 9일 남으면 64%', () => {
-    expect(Logic.freshnessPercent(9, 14)).toBe(64);
-    expect(Logic.freshnessPercent(7, 7)).toBe(100);
+test.describe('freshnessPercent (신선도 바 = 남은 일수 ÷ 14일, 모든 재료 같은 기준)', () => {
+  test('남은 일수에 비례: 9일 64%, 3일 21%(빨강 끝), 7일 50%(주황 끝)', () => {
+    expect(Logic.freshnessPercent(9)).toBe(64);
+    expect(Logic.freshnessPercent(3)).toBe(21);
+    expect(Logic.freshnessPercent(7)).toBe(50);
+    expect(Logic.FRESH_SCALE_DAYS).toBe(14);
   });
-  test('기한이 지나면 0%, 오늘까지면 0%', () => {
-    expect(Logic.freshnessPercent(-1, 7)).toBe(0);
-    expect(Logic.freshnessPercent(0, 7)).toBe(0);
+  test('14일 이상은 꽉 참, 기한 지남·오늘까지는 0%', () => {
+    expect(Logic.freshnessPercent(14)).toBe(100);
+    expect(Logic.freshnessPercent(365)).toBe(100);
+    expect(Logic.freshnessPercent(0)).toBe(0);
+    expect(Logic.freshnessPercent(-2)).toBe(0);
   });
-  test('유통기한을 늘려 남은 일수가 전체보다 길면 100%, 전체 기간이 0 이하여도 안전', () => {
-    expect(Logic.freshnessPercent(10, 7)).toBe(100);
-    expect(Logic.freshnessPercent(3, 0)).toBe(100);
-    expect(Logic.freshnessPercent(0, 0)).toBe(0);
+  test('바 길이 순서가 남은 일수 순서와 같음 (날짜를 바꾸면 바도 바뀜)', () => {
+    const days = [0, 1, 2, 3, 5, 7, 9, 12, 14, 30];
+    const pcts = days.map(d => Logic.freshnessPercent(d));
+    expect(pcts).toEqual([...pcts].sort((a, b) => a - b));
+    expect(new Set(pcts.slice(0, 9)).size).toBe(9);   // 14일 전까지는 하루 차이도 길이가 달라요
   });
 });
 
