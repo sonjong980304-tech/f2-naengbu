@@ -48,6 +48,10 @@ h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.3;lette
 .back:disabled{opacity:.4;cursor:not-allowed}
 .back svg.lucide{width:22px;height:22px}
 .topbar .cap{margin-left:auto;padding:4px 12px;border-radius:999px;background:var(--surface-card);color:var(--body)}
+.soundbtn{display:inline-grid;place-items:center;width:44px;height:44px;margin:0 -10px 0 auto;border-radius:999px;color:var(--muted)}
+.topbar .cap + .soundbtn{margin-left:4px}
+.soundbtn[aria-pressed="true"]{color:var(--primary)}
+.apphead .soundbtn svg.lucide,.soundbtn svg.lucide{width:20px;height:20px;color:inherit}
 
 /* 버튼 */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;border-radius:var(--r-md);font-size:16px;font-weight:600;border:1px solid transparent;transition:background-color .15s,border-color .15s}

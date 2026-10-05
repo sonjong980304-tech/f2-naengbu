@@ -557,3 +557,34 @@ test('직접 쓰기 칸을 누르면 재료 후보 패널이 열리고, 눌러�
   await expect(page.locator('.manual-picker')).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+/* ───────── 효과음 (실제 소리 대신 AudioContext를 흉내 내서 몇 번 울렸는지 세요) ───────── */
+test('효과음: 기본 켜짐, 버튼을 누르면 울리고, 끄면 안 울리며 새로고침해도 꺼짐 유지', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.addInitScript(() => {
+    window.__beeps = 0;
+    window.AudioContext = class {
+      constructor() { this.state = 'running'; this.currentTime = 0; this.destination = {}; }
+      resume() { return Promise.resolve(); }
+      createOscillator() { const p = { setValueAtTime() {}, exponentialRampToValueAtTime() {} }; return { type: '', frequency: p, connect() {}, start() { window.__beeps++; }, stop() {} }; }
+      createGain() { return { gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {} }; }
+    };
+  });
+  await open(page);
+  const btn = page.locator('.soundbtn');
+  await expect(btn).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-act="fill"]').click();
+  expect(await page.evaluate(() => window.__beeps)).toBeGreaterThan(0);
+
+  await page.locator('.soundbtn').click();
+  await expect(page.locator('.soundbtn')).toHaveAttribute('aria-pressed', 'false');
+  const before = await page.evaluate(() => window.__beeps);
+  await page.locator('[data-act="sel"]').first().click();
+  expect(await page.evaluate(() => window.__beeps)).toBe(before);
+
+  await page.reload();
+  await expect(page.locator('.soundbtn')).toHaveAttribute('aria-pressed', 'false');
+  await page.locator('.soundbtn').click();
+  await expect(page.locator('.soundbtn')).toHaveAttribute('aria-pressed', 'true');
+  expect(errors).toEqual([]);
+});

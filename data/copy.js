@@ -6,7 +6,9 @@ window.COPY = {
     "tagline": "냉장고 속 재료로 오늘 메뉴를 정해 드려요",
     "iconCredits": "아이콘 출처",
     "iconCreditsLine": "\"{iconTitle}\" icon by {author} from Flaticon",
-    "recipeCredits": "레시피 출처: 식품의약품안전처·농림축산식품부 공공데이터를 바탕으로 다듬었어요"
+    "recipeCredits": "레시피 출처: 식품의약품안전처·농림축산식품부 공공데이터를 바탕으로 다듬었어요",
+    "soundOn": "효과음 켜기",
+    "soundOff": "효과음 끄기"
   },
   "badge": {
     "today": "D-day",

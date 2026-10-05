@@ -22,6 +22,7 @@
 <script src="data/icon-map.js"></script>
 <script src="js/receipt.js"></script>
 <script src="js/ocr.js"></script>
+<script src="js/sound.js"></script>
 <script src="data/ingredient-info.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -365,7 +366,7 @@ function viewFridge(){
   S.sel = new Set(L.selectableSelection([...S.sel], fridgeNow()));
   const items = S.items.map(x => ({ ...x, d: daysLeft(x.expiryDate) }));
   const sum = L.fridgeSummary(items.map(x => ({ name: x.name, daysLeft: x.d })));
-  let h = `<header class="apphead">${lu('refrigerator')}${esc(t('app.title'))}</header>`;
+  let h = `<header class="apphead">${lu('refrigerator')}${esc(t('app.title'))}${soundBtn()}</header>`;
   h += `<h1>${esc(t('fridge.title'))}</h1><p class="lead">${esc(t('fridge.lead'))}</p>`;
   if (items.length){
     if (sum.expired.length) h += `<div class="summary"><span class="dd dd-x">${esc(t('badge.expired'))}</span>${esc(t('fridge.summaryExpired',{n:sum.expired.length, list:sum.expired.join(', ')}))}</div>`;
@@ -427,7 +428,7 @@ function viewFridge(){
 
 /* ───────── 화면 2·3 · 오늘의 추천 레시피 ───────── */
 function viewList(){
-  let h = `<header class="apphead">${lu('refrigerator')}${esc(t('app.title'))}</header>`;
+  let h = `<header class="apphead">${lu('refrigerator')}${esc(t('app.title'))}${soundBtn()}</header>`;
   h += `<h1>${esc(t('today.title'))}</h1>`;
   if (S.listLoading){
     h += `<p class="lead">${esc(t('recipeList.loading'))}</p>` + skeletons(3);
@@ -455,7 +456,7 @@ function viewList(){
 /* ───────── 화면 4 · 피드백 선택 ───────── */
 function viewFeedback(){
   const tg = S.fb.targets;
-  let h = `<div class="topbar"><button class="back" data-act="fbBack" aria-label="${esc(t('feedback.back'))}">${lu('chevron-left')}</button></div>`;
+  let h = `<div class="topbar"><button class="back" data-act="fbBack" aria-label="${esc(t('feedback.back'))}">${lu('chevron-left')}</button>${soundBtn()}</div>`;
   h += `<h1>${esc(t('feedback.title'))}</h1><p class="cap" style="margin-top:4px">${esc(t('feedback.lead'))}</p>`;
   if (tg.length === 1){
     const r = tg[0];
@@ -473,7 +474,7 @@ function viewFeedback(){
 
 /* ───────── 화면 5 · 피드백 반영 재추천 ───────── */
 function viewRe(){
-  let h = `<div class="topbar"><button class="back" data-act="reBack" aria-label="${esc(t('rerecommend.back'))}"${S.re.loading ? ' disabled aria-disabled="true"' : ''}>${lu('chevron-left')}</button><span class="cap">${esc(t('rerecommend.round',{n:S.session.round}))}</span></div>`;
+  let h = `<div class="topbar"><button class="back" data-act="reBack" aria-label="${esc(t('rerecommend.back'))}"${S.re.loading ? ' disabled aria-disabled="true"' : ''}>${lu('chevron-left')}</button><span class="cap">${esc(t('rerecommend.round',{n:S.session.round}))}</span>${soundBtn()}</div>`;
   h += `<h1>${esc(t('rerecommend.title'))}</h1><p class="lead">${esc(t('rerecommend.lead'))}</p>`;
   h += `<section class="fb" aria-label="${esc(t('rerecommend.reflectedLabel'))}"><p>${esc(t('rerecommend.reflectedLabel'))}</p><div class="chips">` +
     TAG_ORDER.filter(k => S.re.tags.includes(k)).map(k => `<span class="fb-chip">${esc(t('feedback.tags.' + k))}</span>`).join('') + `</div></section>`;
@@ -513,6 +514,13 @@ function viewRe(){
 /* ───────── 렌더 ───────── */
 const app = document.getElementById('app'), dock = document.getElementById('dock');
 let lastView = null;
+/* 효과음 켜기/끄기 (기본 켜짐) */
+let SOUND_STORE = null; try { SOUND_STORE = window.localStorage; } catch(e){}
+if (window.Sound) window.Sound.init(SOUND_STORE);
+function soundBtn(){
+  const on = !window.Sound || window.Sound.isOn();
+  return `<button class="soundbtn" data-act="sound" aria-pressed="${on}" aria-label="${esc(t(on ? 'app.soundOff' : 'app.soundOn'))}">${lu(on ? 'volume-2' : 'volume-x')}</button>`;
+}
 function render(){
   const v = { fridge: viewFridge, list: viewList, feedback: viewFeedback, re: viewRe }[S.view]();
   app.innerHTML = v.html;
@@ -556,7 +564,9 @@ function undo(){
 document.addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return;
   const a = b.dataset.act, n = b.dataset.n;
+  if (window.Sound) window.Sound.play(window.Sound.soundFor(a, { had: a === 'chip' && !!find(n) }));
   switch (a){
+    case 'sound': window.Sound.setOn(!window.Sound.isOn()); window.Sound.play('tick'); renderAnchored('.soundbtn'); break;
     case 'fill': FRIDGE_DATA.sampleFridge.forEach(x => addItem(x.name, x.daysLeft, false, x.shelfDays)); saveFridge(); render(); break;
     case 'sel': {
       const it = find(n);
@@ -629,6 +639,8 @@ document.addEventListener('click', ev => {
     }
   }
 });
+// 브라우저는 첫 터치 뒤에만 소리를 허락해요
+document.addEventListener('pointerdown', () => { if (window.Sound) window.Sound.unlock(); }, { once: true, capture: true });
 document.addEventListener('keydown', ev => {
   if (ev.target.id === 'manualInput' && ev.key === 'Enter' && !ev.isComposing){ ev.preventDefault(); manualAdd(); }
 });
