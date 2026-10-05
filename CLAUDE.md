@@ -52,7 +52,8 @@
 ## 4. 데이터 불러오기와 저장
 
 - JSON 데이터는 fetch를 쓰지 않고 `data/*.js` 파일(window 전역 변수)로 만들어 `<script>`로 불러와요. index.html을 파일로 직접 열어도 동작해야 해요
-- 원본 JSON을 고치면 같은 내용의 `data/*.js`도 함께 갱신해요
+- 원본은 `data/*.json`이에요. JSON을 고친 뒤 `cd tests && node tools/sync-data.js`로 `data/*.js`를 갱신해요 (`data/*.js`는 직접 고치지 않아요). 둘이 어긋나면 `tests/logic/data-sync.spec.js`가 실패해요
+- index.html 안에 데이터를 직접 넣지 않아요. 재료 아이콘은 `icons/ingredients/`의 PNG 경로로 불러와요 (icon-map.json의 basePath)
 - 냉장고 재료·유통기한은 localStorage, 재추천 세션(피드백, 제외 목록, 회차)은 sessionStorage에 저장해요
 - localStorage, sessionStorage 접근은 try/catch로 감싸고, 실패하면 메모리 저장으로 대체해요 (Claude Artifact 백업 링크에서도 동작하도록)
 - D-day는 저장하지 않고 화면을 그릴 때마다 날짜 단위로 다시 계산해요
