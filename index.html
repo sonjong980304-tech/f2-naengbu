@@ -433,6 +433,16 @@ function render(){
   if (lastView !== S.view){ window.scrollTo(0,0); lastView = S.view; }
 }
 function go(view){ S.view = view; render(); }
+// 위쪽 냉장고 칸의 줄 수가 바뀌어도 기준 요소가 화면에서 같은 자리에 머물게 해요 (휴대폰에서 칩 3개마다 화면이 튀던 문제)
+function renderAnchored(selector, refocus){
+  const el = document.querySelector(selector);
+  const before = el ? el.getBoundingClientRect().top : null;
+  render();
+  const after = document.querySelector(selector);
+  if (before === null || !after) return;
+  window.scrollBy(0, after.getBoundingClientRect().top - before);
+  if (refocus) after.focus({ preventScroll: true });
+}
 function toast(msg){
   const el = document.createElement('div'); el.className = 'toast'; el.setAttribute('role','status'); el.textContent = msg;
   document.body.appendChild(el); setTimeout(() => el.remove(), 2000);
@@ -466,8 +476,8 @@ document.addEventListener('click', ev => {
     }
     case 'toggleAdd': S.addOpen = !S.addOpen; render(); break;
     case 'tab': S.addTab = b.dataset.tab; render(); break;
-    case 'chip': find(n) ? removeItem(n) : addItem(n, 7); saveFridge(); render(); break;
-    case 'remove': removeItem(n); saveFridge(); render(); break;
+    case 'chip': find(n) ? removeItem(n) : addItem(n, 7); saveFridge(); renderAnchored('[data-act="chip"][data-n="' + CSS.escape(n) + '"]', true); break;
+    case 'remove': removeItem(n); saveFridge(); renderAnchored('.list-title'); break;
     case 'scan': runScan(); break;
     case 'receiptSample': FRIDGE_DATA.receiptDemo.items.forEach(x => addItem(x.name, x.daysLeft, true)); S.receipt = { status: 'sample', progress: 100, count: 5 }; saveFridge(); render(); break;
     case 'credits': S.creditsOpen = !S.creditsOpen; render(); break;
@@ -528,7 +538,7 @@ document.addEventListener('change', ev => {
   const el = ev.target;
   if (el.matches('input[type="date"][data-exp]')){
     const x = find(el.dataset.exp);
-    if (x && /^\d{4}-\d{2}-\d{2}$/.test(el.value)){ x.expiryDate = el.value; saveFridge(); render(); }
+    if (x && /^\d{4}-\d{2}-\d{2}$/.test(el.value)){ x.expiryDate = el.value; saveFridge(); renderAnchored('input[data-exp="' + CSS.escape(x.name) + '"]'); }
   } else if (el.id === 'receiptFile' && el.files[0]){
     const r = new FileReader();
     r.onload = () => { S.receiptPreview = r.result; S.receipt = { status: 'idle', progress: 0, count: 0 }; render(); };   // 영수증 이미지는 저장하지 않아요

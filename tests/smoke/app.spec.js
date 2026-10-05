@@ -174,6 +174,31 @@ test('꿀조합은 예시 데이터임을 표기', async ({ page }) => {
   await expect(page.getByText('다른 유저 꿀조합')).toHaveCount(0);
 });
 
+test('재료 직접 입력: 칩을 눌러 넣고 빼도 누른 칩이 화면에서 움직이지 않음', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await open(page);
+  await page.click('[data-act="toggleAdd"]');
+  const chips = ['대파', '양파', '마늘', '당근', '감자', '김치', '애호박'];
+  await page.locator(`[data-act="chip"][data-n="${chips[0]}"]`).scrollIntoViewIfNeeded();
+  const topOf = n => page.locator(`[data-act="chip"][data-n="${n}"]`).evaluate(el => el.getBoundingClientRect().top);
+  for (const n of [...chips, ...chips]) {   // 넣고 → 빼기
+    const before = await topOf(n);
+    await page.locator(`[data-act="chip"][data-n="${n}"]`).click();
+    expect(Math.abs((await topOf(n)) - before)).toBeLessThanOrEqual(1);
+  }
+  await expect(page.locator(`[data-act="chip"][data-n="${chips[chips.length - 1]}"]`)).toBeFocused();   // 마지막으로 누른 칩
+
+  // 목록의 × 로 빼도 목록 제목이 제자리 (아래 내용이 충분할 때 — 페이지 끝에서는 더 내릴 공간이 없어요)
+  for (const n of [...chips, '버섯', '사과', '스팸', '참치캔', '계란']) await page.locator(`[data-act="chip"][data-n="${n}"]`).click();
+  const title = page.locator('.list-title');
+  await title.scrollIntoViewIfNeeded();
+  for (let i = 0; i < 3; i++) {
+    const before = await title.evaluate(el => el.getBoundingClientRect().top);
+    await page.locator('[data-act="remove"]').first().click();
+    expect(Math.abs((await title.evaluate(el => el.getBoundingClientRect().top)) - before)).toBeLessThanOrEqual(1);
+  }
+});
+
 test('해 먹은 뒤 화면: 안내 칸만 크게, 리드·빈 결과 문구는 숨김', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await open(page);
