@@ -386,3 +386,54 @@ test('영수증 OCR: 인식 오류가 나도 앱이 멈추지 않고 대체 경�
   await expect(page.getByText('영수증을 읽지 못했어요', { exact: false })).toBeVisible();
   await expect(page.locator('[data-act="receiptSample"]')).toBeVisible();
 });
+
+/* ───────── 영수증 인식 뒤 빠진 재료 직접 쓰기 ───────── */
+test('영수증 인식 뒤 직접 쓰기: 칸이 보이고, 별칭으로 넣고, 이미 있음·없는 재료·여러 재료 안내', async ({ page }) => {
+  const errors = watchErrors(page);
+  await openReceiptTab(page, '풀무원 국산콩두부 300g 3,980\n깐대파 1봉 2,480');
+  await expect(page.locator('#manualInput')).toHaveCount(0);   // 인식 전에는 없음
+  await page.click('[data-act="scan"]');
+  await expect(page.getByText('영수증에서 재료 2개를 찾았어요', { exact: false })).toBeVisible();
+  const input = page.locator('#manualInput');
+  await expect(input).toBeVisible();
+  await expect(page.locator('#masterList option[value="계란"]')).toHaveCount(1);
+
+  // "달걀" + Enter → 계란 (영수증 태그 없음), 칸 비우고 포커스 유지, 칸 위치 그대로
+  await input.scrollIntoViewIfNeeded();
+  const before = await input.evaluate(el => el.getBoundingClientRect().top);
+  await input.fill('달걀');
+  await input.press('Enter');
+  await expect(page.locator('.manual-msg')).toHaveText('계란을(를) 냉장고에 넣었어요');
+  await expect(page.locator('.tile[data-n="계란"]')).toHaveCount(1);
+  await expect(page.locator('.row', { hasText: '계란' }).locator('.tag')).toHaveCount(0);
+  await expect(page.locator('#manualInput')).toHaveValue('');
+  await expect(page.locator('#manualInput')).toBeFocused();
+  expect(Math.abs((await page.locator('#manualInput').evaluate(el => el.getBoundingClientRect().top)) - before)).toBeLessThanOrEqual(1);
+
+  // 이미 있는 재료 (버튼으로)
+  await page.locator('#manualInput').fill('두부');
+  await page.click('[data-act="manualAdd"]');
+  await expect(page.locator('.manual-msg')).toHaveText('두부은(는) 이미 냉장고에 있어요');
+  await expect(page.locator('#manualInput')).toHaveValue('두부');
+
+  // 마스터에 없는 재료
+  await page.locator('#manualInput').fill('아보카도');
+  await page.click('[data-act="manualAdd"]');
+  await expect(page.locator('.manual-msg')).toHaveText('아직 지원하지 않는 재료예요. 목록의 재료 이름으로 넣어 주세요');
+
+  // 여러 재료가 섞임
+  await page.locator('#manualInput').fill('양파 당근');
+  await page.click('[data-act="manualAdd"]');
+  await expect(page.locator('.manual-msg')).toHaveText('재료가 여러 개로 보여요(양파, 당근). 하나씩 넣어 주세요');
+  await expect(page.locator('.tile[data-n="양파"]')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('영수증 인식 실패해도 직접 쓰기 칸으로 넣을 수 있음', async ({ page }) => {
+  await openReceiptTab(page, '__throw__');
+  await page.click('[data-act="scan"]');
+  await expect(page.locator('[data-act="receiptSample"]')).toBeVisible();
+  await page.locator('#manualInput').fill('쪽파');
+  await page.locator('#manualInput').press('Enter');
+  await expect(page.locator('.tile[data-n="대파"]')).toHaveCount(1);
+});

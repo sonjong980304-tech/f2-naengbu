@@ -23,5 +23,16 @@
     return order.filter(n => found.has(n));
   }
 
-  return { normalizeLine, matchIngredients };
+  // 사용자가 직접 쓴 한 줄 → 재료 하나. 둘 이상으로 해석되면 고르지 않고 ambiguous로 돌려줘요
+  function resolveTyped(text, items, masterOrder) {
+    const key = normalizeLine(text);
+    if (!key) return { status: 'empty', name: null, candidates: [] };
+    if (items[key]) return { status: 'ok', name: key, candidates: [key] };
+    const found = matchIngredients(key, items, masterOrder);
+    if (found.length === 1) return { status: 'ok', name: found[0], candidates: found };
+    if (found.length > 1) return { status: 'ambiguous', name: null, candidates: found };
+    return { status: 'none', name: null, candidates: [] };
+  }
+
+  return { normalizeLine, matchIngredients, resolveTyped };
 });
