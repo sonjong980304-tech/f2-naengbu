@@ -38,3 +38,4 @@ test.describe('resolveTyped (영수증 인식 후 직접 쓰기)', () => {
     for (const s of ['constructor', 'toString', 'hasOwnProperty', '__proto__']) expect(resolve(s).status).toBe('none');
   });
 });
+

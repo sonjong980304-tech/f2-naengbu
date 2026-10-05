@@ -47,7 +47,7 @@ window.COPY = {
     "receiptFail": "영수증을 읽지 못했어요. 인터넷 연결을 확인하거나, 샘플 재료로 넣어 볼 수 있어요.",
     "receiptSample": "샘플 재료로 넣기 (시연용)",
     "manualLabel": "빠진 재료 직접 쓰기",
-    "manualPlaceholder": "예: 달걀, 두부",
+    "manualPlaceholder": "눌러서 고르거나 직접 쓰기",
     "manualAdd": "추가",
     "manualAdded": "{name}을(를) 목록에 담았어요",
     "manualExists": "{name}은(는) 이미 냉장고에 있어요",
@@ -72,7 +72,10 @@ window.COPY = {
     "reviewConfirm": "냉장고에 넣기 ({n})",
     "reviewCancel": "넣지 않고 목록 지우기",
     "reviewAdded": "재료 {n}개를 냉장고에 넣었어요.",
-    "reviewSkipped": " 이미 있던 {n}개는 빼고 넣었어요."
+    "reviewSkipped": " 이미 있던 {n}개는 빼고 넣었어요.",
+    "pickerTitle": "재료 후보에서 고르기",
+    "pickerClose": "닫기",
+    "manualRemoved": "{name}을(를) 목록에서 뺐어요"
   },
   "recipeList": {
     "titleUrgent": "임박한 재료부터 골랐어요",

@@ -146,6 +146,11 @@ h2{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.3;lette
 .manual-msg{min-height:20px;margin-top:8px}
 .manual-msg.ok{color:var(--primary-ink)}
 .manual-msg.warn{color:var(--urgent-ink)}
+.manual-picker{margin-top:8px;padding:0 12px 12px;max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:1px solid var(--hairline);border-radius:var(--r-lg);background:var(--card)}
+.picker-head{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;padding:8px 0 6px;background:var(--card);font-size:14px;color:var(--ink)}
+.picker-head .textbtn{min-height:40px}
+.manual-picker .cat+.cat{margin-top:12px}
+.manual-picker .chip{height:36px;font-size:14px}
 .receipt-progress{margin-top:12px}
 .receipt-progress .cap{margin-bottom:6px;color:var(--body)}
 .receipt-progress .fresh-track i{background:var(--accent);transition:width .2s}

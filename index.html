@@ -265,12 +265,42 @@ function manualEntry(){
   if (!['found', 'none', 'fail', 'sample'].includes(S.receipt.status)) return '';
   const M = S.manual;
   return `<div class="manual"><label for="manualInput" class="manual-label">${esc(t('fridge.manualLabel'))}</label>`
-    + `<div class="manual-row"><input id="manualInput" type="text" list="masterList" autocomplete="off" enterkeyhint="done" placeholder="${esc(t('fridge.manualPlaceholder'))}" value="${esc(M.value)}">`
+    + `<div class="manual-row"><input id="manualInput" type="text" autocomplete="off" enterkeyhint="done" placeholder="${esc(t('fridge.manualPlaceholder'))}" value="${esc(M.value)}">`
     + `<button class="btn btn-s manual-add" data-act="manualAdd">${esc(t('fridge.manualAdd'))}</button></div>`
-    + `<datalist id="masterList">${Object.values(CATS).flat().map(n => `<option value="${esc(n)}"></option>`).join('')}</datalist>`
-    + `<p class="cap manual-msg${M.kind ? ' ' + M.kind : ''}" role="status">${esc(M.msg)}</p></div>`;
+    + `<p class="cap manual-msg${M.kind ? ' ' + M.kind : ''}" role="status">${esc(M.msg)}</p>`
+    + `<div id="manualPicker">${M.open ? manualPicker() : ''}</div></div>`;
+}
+/* 입력칸을 누르면 여는 재료 후보 패널 (아이폰·갤럭시 동일, 글자를 칠 때는 띄우지 않아요) */
+function manualPicker(){
+  const inList = new Set(S.pending.map(x => x.name));
+  return `<div class="manual-picker" role="group" aria-label="${esc(t('fridge.pickerTitle'))}"><div class="picker-head"><b>${esc(t('fridge.pickerTitle'))}</b><button class="textbtn" data-act="manualClose">${esc(t('fridge.pickerClose'))}</button></div>`
+    + CAT_ORDER.map(c => `<div class="cat"><h3>${esc(c)}</h3><div class="chips">${CATS[c].map(n => `<button class="chip" data-act="manualPick" data-n="${esc(n)}" aria-pressed="${inList.has(n)}">${ingIcon(n)}${esc(n)}<span class="ck">${lu('check')}</span></button>`).join('')}</div></div>`).join('')
+    + `</div>`;
+}
+function openManualPicker(){
+  if (S.manual.open) return;
+  S.manual.open = true;
+  const box = document.getElementById('manualPicker');   // 전체를 다시 그리지 않아야 아이폰 키보드가 닫히지 않아요
+  if (!box) return;
+  box.innerHTML = manualPicker();
+  if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 2 } });
+}
+function manualPick(name){
+  const i = S.pending.findIndex(x => x.name === name);
+  if (find(name)) Object.assign(S.manual, { kind: 'warn', msg: t('fridge.manualExists', { name }) });
+  else if (i > -1){ S.pending.splice(i, 1); Object.assign(S.manual, { kind: 'ok', msg: t('fridge.manualRemoved', { name }) }); }
+  else { S.pending.push({ name, expiryDate: addDays(window.INGREDIENT_INFO.items[name].defaultShelfDays), fromReceipt: false }); Object.assign(S.manual, { kind: 'ok', msg: t('fridge.manualAdded', { name }) }); }
+  // 패널 안 스크롤 위치와 누른 버튼의 화면 위치를 그대로 둬요
+  const sel = '[data-act="manualPick"][data-n="' + CSS.escape(name) + '"]';
+  const box = document.querySelector('.manual-picker'), st = box ? box.scrollTop : 0;
+  const el = document.querySelector(sel), before = el ? el.getBoundingClientRect().top : null;
+  render();
+  const nb = document.querySelector('.manual-picker'); if (nb) nb.scrollTop = st;
+  const after = document.querySelector(sel);
+  if (before !== null && after) window.scrollBy(0, after.getBoundingClientRect().top - before);
 }
 function manualAdd(){
+  const open = S.manual.open;
   const input = document.getElementById('manualInput');
   const value = input ? input.value : '';
   const r = window.Receipt.resolveTyped(value, window.INGREDIENT_INFO.items, Object.values(CATS).flat());
@@ -283,6 +313,7 @@ function manualAdd(){
   }
   else if (r.status === 'ambiguous') S.manual = { value, kind: 'warn', msg: t('fridge.manualAmbiguous', { list: r.candidates.join(', ') }) };
   else S.manual = { value, kind: 'warn', msg: t('fridge.manualNone') };
+  S.manual.open = open;
   renderAnchored('#manualInput', true);
 }
 /* 영수증 확인 목록: 인식·샘플·직접 쓰기 재료를 먼저 보여 주고, 승인해야 냉장고에 넣어요 */
@@ -532,6 +563,8 @@ document.addEventListener('click', ev => {
     case 'remove': removeItem(n); saveFridge(); renderAnchored('.list-title'); break;
     case 'scan': runScan(); break;
     case 'manualAdd': manualAdd(); break;
+    case 'manualPick': manualPick(n); break;
+    case 'manualClose': S.manual.open = false; renderAnchored('#manualInput'); break;
     case 'receiptSample': S.pending = FRIDGE_DATA.receiptDemo.items.map(x => ({ name: x.name, expiryDate: addDays(x.daysLeft), fromReceipt: true })); S.receipt = { status: 'sample', progress: 100, count: S.pending.length }; renderAnchored('#addArea'); break;
     case 'pendRemove': S.pending.splice(Number(b.dataset.i), 1); renderAnchored('.pending-title'); break;
     case 'pendConfirm': confirmPending(); break;
@@ -594,6 +627,8 @@ document.addEventListener('keydown', ev => {
   if (ev.target.id === 'manualInput' && ev.key === 'Enter' && !ev.isComposing){ ev.preventDefault(); manualAdd(); }
 });
 document.addEventListener('input', ev => { if (ev.target.id === 'manualInput') S.manual.value = ev.target.value; });
+document.addEventListener('focusin', ev => { if (ev.target.id === 'manualInput') openManualPicker(); });
+document.addEventListener('click', ev => { if (ev.target.id === 'manualInput') openManualPicker(); });
 document.addEventListener('change', ev => {
   const el = ev.target;
   if (el.matches('select[data-pend-name]')){

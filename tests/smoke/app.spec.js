@@ -468,7 +468,7 @@ test('영수증 인식 뒤 직접 쓰기: 별칭으로 목록에 담고, 이미 
   await expect(page.getByText('영수증에서 재료 2개를 찾았어요', { exact: false })).toBeVisible();
   const input = page.locator('#manualInput');
   await expect(input).toBeVisible();
-  await expect(page.locator('#masterList option[value="계란"]')).toHaveCount(1);
+  await expect(page.locator('datalist')).toHaveCount(0);   // 브라우저 자동완성은 쓰지 않아요 (아이폰·갤럭시 차이)
 
   // "달걀" + Enter → 계란이 목록에 담김(냉장고에는 아직 없음), 칸 비우고 포커스 유지, 칸 위치 그대로
   await input.scrollIntoViewIfNeeded();
@@ -515,4 +515,45 @@ test('영수증 인식 실패해도 직접 쓰기로 목록에 담아 넣을 수
   expect(await pendNames(page)).toEqual(['대파']);
   await page.click('[data-act="pendConfirm"]');
   await expect(page.locator('.tile[data-n="대파"]')).toHaveCount(1);
+});
+
+test('직접 쓰기 칸을 누르면 재료 후보 패널이 열리고, 눌러서 목록에 담고 빼기 (아이폰·갤럭시 공통)', async ({ page }) => {
+  const errors = watchErrors(page);
+  await openReceiptTab(page, '깐대파 1봉');
+  await page.click('[data-act="toggleAdd"]'); await page.click('[data-act="toggleAdd"]');      // 직접 입력 탭에서 김치를 냉장고에 넣어 둠
+  await page.click('[data-act="tab"][data-tab="manual"]'); await page.click('[data-act="chip"][data-n="김치"]');
+  await page.click('[data-act="tab"][data-tab="receipt"]');
+  await page.setInputFiles('#receiptFile', { name: 'receipt.png', mimeType: 'image/png', buffer: PNG_1PX });
+  await page.click('[data-act="scan"]');
+  await expect(page.locator('.manual-picker')).toHaveCount(0);                 // 누르기 전에는 닫혀 있음
+
+  await page.locator('#manualInput').click();                                  // 빈 칸을 누르면 열림
+  const picker = page.locator('.manual-picker');
+  await expect(picker).toBeVisible();
+  await expect(picker.locator('[data-act="manualPick"]')).toHaveCount(57);
+  await expect(page.locator('#manualInput')).toBeFocused();                     // 키보드(포커스)가 닫히지 않음
+
+  // 후보를 누르면 목록에 담기고, 누른 버튼은 화면에서 그대로
+  const egg = picker.locator('[data-act="manualPick"][data-n="계란"]');
+  await egg.scrollIntoViewIfNeeded();
+  const before = await egg.evaluate(el => el.getBoundingClientRect().top);
+  await egg.click();
+  await expect(page.locator('.manual-msg')).toHaveText('계란을(를) 목록에 담았어요');
+  await expect(page.locator('select[data-pend-name]')).toHaveCount(2);
+  await expect(page.locator('.manual-picker [data-n="계란"]')).toHaveAttribute('aria-pressed', 'true');
+  expect(Math.abs((await page.locator('.manual-picker [data-n="계란"]').evaluate(el => el.getBoundingClientRect().top)) - before)).toBeLessThanOrEqual(1);
+
+  // 다시 누르면 빠짐, 냉장고에 있는 재료는 안내
+  await page.locator('.manual-picker [data-n="계란"]').click();
+  await expect(page.locator('.manual-msg')).toHaveText('계란을(를) 목록에서 뺐어요');
+  await expect(page.locator('select[data-pend-name]')).toHaveCount(1);
+  await page.locator('.manual-picker [data-n="김치"]').click();
+  await expect(page.locator('.manual-msg')).toHaveText('김치은(는) 이미 냉장고에 있어요');
+
+  // 닫기 → 다시 칸을 누르면 열림
+  await page.click('[data-act="manualClose"]');
+  await expect(page.locator('.manual-picker')).toHaveCount(0);
+  await page.locator('#manualInput').click();
+  await expect(page.locator('.manual-picker')).toBeVisible();
+  expect(errors).toEqual([]);
 });
