@@ -73,7 +73,7 @@ const S = {
   sel: new Set(),            // 화면 1 선택 재료 (저장 안 함)
   view: 'fridge',            // fridge | list | feedback | re
   mode: 'urgent',            // urgent | picked
-  addOpen: false, addTab: 'manual', receiptPreview: null, receipt: { status: 'idle', progress: 0, count: 0 }, creditsOpen: false,
+  addOpen: false, addTab: 'manual', receiptPreview: null, receipt: { status: 'idle', progress: 0, count: 0 }, manual: { value: '', kind: '', msg: '' }, creditsOpen: false,
   listLoading: false, pickedName: null, notice: null, lastRemoved: null,
   openSteps: new Set(), liked: {},
   session: { rejected: [], round: 1 },
@@ -245,7 +245,7 @@ async function recognizeReceipt(image, onProgress){
   }
 }
 async function runScan(){
-  S.receipt = { status: 'reading', progress: 0, count: 0 }; render();
+  S.receipt = { status: 'reading', progress: 0, count: 0 }; S.manual = { value: '', kind: '', msg: '' }; render();
   const onProgress = n => {
     if (S.receipt.status !== 'reading' || n <= S.receipt.progress) return;
     S.receipt.progress = Math.min(n, 99); render();
@@ -260,6 +260,31 @@ async function runScan(){
     S.receipt = { status: 'fail', progress: 0, count: 0 };
   }
   render();
+}
+/* 영수증 인식 뒤 빠진 재료 직접 쓰기 (인식 성공·0개·실패·샘플 모두) */
+function manualEntry(){
+  if (!['found', 'none', 'fail', 'sample'].includes(S.receipt.status)) return '';
+  const M = S.manual;
+  return `<div class="manual"><label for="manualInput" class="manual-label">${esc(t('fridge.manualLabel'))}</label>`
+    + `<div class="manual-row"><input id="manualInput" type="text" list="masterList" autocomplete="off" enterkeyhint="done" placeholder="${esc(t('fridge.manualPlaceholder'))}" value="${esc(M.value)}">`
+    + `<button class="btn btn-s manual-add" data-act="manualAdd">${esc(t('fridge.manualAdd'))}</button></div>`
+    + `<datalist id="masterList">${Object.values(CATS).flat().map(n => `<option value="${esc(n)}"></option>`).join('')}</datalist>`
+    + `<p class="cap manual-msg${M.kind ? ' ' + M.kind : ''}" role="status">${esc(M.msg)}</p></div>`;
+}
+function manualAdd(){
+  const input = document.getElementById('manualInput');
+  const value = input ? input.value : '';
+  const r = window.Receipt.resolveTyped(value, window.INGREDIENT_INFO.items, Object.values(CATS).flat());
+  if (r.status === 'empty') return;
+  if (r.status === 'ok' && find(r.name)) S.manual = { value, kind: 'warn', msg: t('fridge.manualExists', { name: r.name }) };
+  else if (r.status === 'ok'){
+    const d = window.INGREDIENT_INFO.items[r.name].defaultShelfDays;
+    addItem(r.name, d, false, d); saveFridge();
+    S.manual = { value: '', kind: 'ok', msg: t('fridge.manualAdded', { name: r.name }) };
+  }
+  else if (r.status === 'ambiguous') S.manual = { value, kind: 'warn', msg: t('fridge.manualAmbiguous', { list: r.candidates.join(', ') }) };
+  else S.manual = { value, kind: 'warn', msg: t('fridge.manualNone') };
+  renderAnchored('#manualInput', true);
 }
 function receiptStatus(){
   const R = S.receipt;
@@ -314,7 +339,7 @@ function viewFridge(){
           ? `<img src="${S.receiptPreview}" alt="${esc(t('fridge.receiptPreviewAlt'))}"><span>${esc(t('fridge.receiptChange'))}</span>`
           : `${lu('camera')}<span>${esc(t('fridge.receiptUpload'))}</span>`}</label>
         <button class="btn btn-s" data-act="scan" style="margin-top:16px"${S.receiptPreview && S.receipt.status !== 'reading' ? '' : ' disabled'}>${esc(t('fridge.receiptScan'))}</button>
-        ${receiptStatus()}</div>`;
+        ${receiptStatus()}${manualEntry()}</div>`;
     }
     h += `<div class="panel"><h2 class="list-title">${esc(t('fridge.listTitle'))}<span class="cap">${esc(t('fridge.listCount',{n:items.length}))}</span></h2>`;
     h += items.length ? items.slice().sort((a,b) => a.d - b.d).map(x => {
@@ -478,6 +503,7 @@ document.addEventListener('click', ev => {
     case 'chip': find(n) ? removeItem(n) : addItem(n, 7); saveFridge(); renderAnchored('[data-act="chip"][data-n="' + CSS.escape(n) + '"]', true); break;
     case 'remove': removeItem(n); saveFridge(); renderAnchored('.list-title'); break;
     case 'scan': runScan(); break;
+    case 'manualAdd': manualAdd(); break;
     case 'receiptSample': FRIDGE_DATA.receiptDemo.items.forEach(x => addItem(x.name, x.daysLeft, true)); S.receipt = { status: 'sample', progress: 100, count: 5 }; saveFridge(); render(); break;
     case 'credits': S.creditsOpen = !S.creditsOpen; render(); break;
     case 'go':
@@ -533,6 +559,10 @@ document.addEventListener('click', ev => {
     }
   }
 });
+document.addEventListener('keydown', ev => {
+  if (ev.target.id === 'manualInput' && ev.key === 'Enter' && !ev.isComposing){ ev.preventDefault(); manualAdd(); }
+});
+document.addEventListener('input', ev => { if (ev.target.id === 'manualInput') S.manual.value = ev.target.value; });
 document.addEventListener('change', ev => {
   const el = ev.target;
   if (el.matches('input[type="date"][data-exp]')){
@@ -540,7 +570,7 @@ document.addEventListener('change', ev => {
     if (x && /^\d{4}-\d{2}-\d{2}$/.test(el.value)){ x.expiryDate = el.value; saveFridge(); renderAnchored('input[data-exp="' + CSS.escape(x.name) + '"]'); }
   } else if (el.id === 'receiptFile' && el.files[0]){
     const r = new FileReader();
-    r.onload = () => { S.receiptPreview = r.result; S.receipt = { status: 'idle', progress: 0, count: 0 }; render(); };   // 영수증 이미지는 저장하지 않아요
+    r.onload = () => { S.receiptPreview = r.result; S.receipt = { status: 'idle', progress: 0, count: 0 }; S.manual = { value: '', kind: '', msg: '' }; render(); };   // 영수증 이미지는 저장하지 않아요
     r.readAsDataURL(el.files[0]);
   }
 });
