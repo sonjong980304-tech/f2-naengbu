@@ -41,7 +41,7 @@ test.describe('matchIngredients', () => {
       '코카콜라 1.5L           1   3,200',
       '합계                         31,590',
     ].join('\n');
-    expect(Receipt.matchIngredients(text, INFO.items, MASTER)).toEqual(['대파', '양파', '스팸', '계란', '두부']);
+    expect(Receipt.matchIngredients(text, INFO.items, MASTER)).toEqual(['대파', '양파', '계란', '두부', '스팸']);
   });
 
   test('OCR이 글자 사이를 띄어 읽어도 찾음', () => {
@@ -61,7 +61,7 @@ test.describe('matchIngredients', () => {
 
   test('새 재료(면·김·전분·카레가루)를 찾고, 라면 상품명 속 김치·오징어·새우는 재료로 치지 않음', () => {
     const text = '농심 신라면 5입\n오뚜기 김치라면 4입\n오징어짬뽕 5입\n청정원 우동사리 3입\n옛날 소면 900g\n자른당면 500g\n광천 조미김 16봉\n감자전분 400g\n바몬드카레 순한맛';
-    expect(Receipt.matchIngredients(text, INFO.items, MASTER)).toEqual(['소면', '우동면', '라면', '당면', '김', '전분', '카레가루']);
+    expect(Receipt.matchIngredients(text, INFO.items, MASTER)).toEqual(['김', '소면', '우동면', '라면', '당면', '전분', '카레가루']);
     expect(Receipt.matchIngredients('컵라면 육개장', INFO.items, MASTER)).toEqual([]);
   });
 

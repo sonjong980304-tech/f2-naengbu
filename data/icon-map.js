@@ -7,98 +7,98 @@ window.ICON_MAP = {
   "icons": {
     "대파": {
       "file": "green-onion.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Green onion",
       "author": "dreamicons",
       "source": "https://cdn-icons-png.flaticon.com/512/8782/8782373.png"
     },
     "양파": {
       "file": "onion.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Onion",
       "author": "imaginationlol",
       "source": "https://cdn-icons-png.flaticon.com/512/4835/4835813.png"
     },
     "마늘": {
       "file": "garlic.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Garlic",
       "author": "BomSymbols",
       "source": "https://cdn-icons-png.flaticon.com/512/3196/3196983.png"
     },
     "당근": {
       "file": "carrot.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Carrot",
       "author": "Magnific",
       "source": "https://cdn-icons-png.flaticon.com/512/1041/1041355.png"
     },
     "감자": {
       "file": "potato.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Potato",
       "author": "Magnific",
       "source": "https://cdn-icons-png.flaticon.com/512/1652/1652127.png"
     },
     "김치": {
       "file": "kimchi.png",
-      "category": "야채·과일",
+      "category": "가공식품·반찬",
       "title": "Kimchi",
       "author": "Magnific",
       "source": "https://cdn-icons-png.flaticon.com/512/2072/2072857.png"
     },
     "애호박": {
       "file": "zucchini.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Zucchini",
       "author": "Design View",
       "source": "https://cdn-icons-png.flaticon.com/512/17859/17859908.png"
     },
     "버섯": {
       "file": "mushroom.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Mushroom",
       "author": "Magnific",
       "source": "https://cdn-icons-png.flaticon.com/512/616/616593.png"
     },
     "사과": {
       "file": "apple.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Apple",
       "author": "Magnific",
       "source": "https://cdn-icons-png.flaticon.com/512/415/415733.png"
     },
     "스팸": {
       "file": "spam.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Spam",
       "author": "Smashicons",
       "source": "https://cdn-icons-png.flaticon.com/512/2742/2742200.png"
     },
     "참치캔": {
       "file": "canned-tuna.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Canned food",
       "author": "Magnific",
       "source": "https://cdn-icons-png.flaticon.com/512/405/405560.png"
     },
     "계란": {
       "file": "egg.png",
-      "category": "고기·해산물",
+      "category": "달걀·두부·유제품",
       "title": "Egg",
       "author": "Magnific",
       "source": "https://cdn-icons-png.flaticon.com/512/837/837560.png"
     },
     "두부": {
       "file": "tofu.png",
-      "category": "고기·해산물",
+      "category": "달걀·두부·유제품",
       "title": "Tofu",
       "author": "justicon",
       "source": "https://cdn-icons-png.flaticon.com/512/2079/2079307.png"
     },
     "어묵": {
       "file": "fish-cake.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Fish cake",
       "author": "Nhor Phai",
       "source": "https://cdn-icons-png.flaticon.com/512/2090/2090187.png"
@@ -126,7 +126,7 @@ window.ICON_MAP = {
     },
     "소시지": {
       "file": "sausage.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Sausage",
       "author": "Smashicons",
       "source": "https://cdn-icons-png.flaticon.com/512/1406/1406895.png"
@@ -189,7 +189,7 @@ window.ICON_MAP = {
     },
     "청양고추": {
       "file": "cheongyang-pepper.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Cheongyang pepper",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -202,7 +202,7 @@ window.ICON_MAP = {
     },
     "양배추": {
       "file": "cabbage.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Cabbage",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -215,7 +215,7 @@ window.ICON_MAP = {
     },
     "콩나물": {
       "file": "bean-sprouts.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Bean sprouts",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -228,7 +228,7 @@ window.ICON_MAP = {
     },
     "깻잎": {
       "file": "perilla-leaf.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Perilla leaf",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -241,7 +241,7 @@ window.ICON_MAP = {
     },
     "토마토": {
       "file": "tomato.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Tomato",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -254,7 +254,7 @@ window.ICON_MAP = {
     },
     "베이컨": {
       "file": "bacon.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Bacon",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -267,7 +267,7 @@ window.ICON_MAP = {
     },
     "치즈": {
       "file": "cheese.png",
-      "category": "고기·해산물",
+      "category": "달걀·두부·유제품",
       "title": "Cheese",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -280,7 +280,7 @@ window.ICON_MAP = {
     },
     "만두": {
       "file": "dumpling.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Dumpling",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -293,7 +293,7 @@ window.ICON_MAP = {
     },
     "맛살": {
       "file": "crab-stick.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Crab stick",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -371,7 +371,7 @@ window.ICON_MAP = {
     },
     "무": {
       "file": "radish.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "White radish",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -384,7 +384,7 @@ window.ICON_MAP = {
     },
     "오이": {
       "file": "cucumber.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Cucumber",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -397,7 +397,7 @@ window.ICON_MAP = {
     },
     "파프리카": {
       "file": "paprika.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Bell pepper",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -423,7 +423,7 @@ window.ICON_MAP = {
     },
     "우유": {
       "file": "milk.png",
-      "category": "고기·해산물",
+      "category": "달걀·두부·유제품",
       "title": "Milk",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -436,7 +436,7 @@ window.ICON_MAP = {
     },
     "생크림": {
       "file": "fresh-cream.png",
-      "category": "고기·해산물",
+      "category": "달걀·두부·유제품",
       "title": "Fresh cream",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -462,7 +462,7 @@ window.ICON_MAP = {
     },
     "가지": {
       "file": "eggplant.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Eggplant",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -475,7 +475,7 @@ window.ICON_MAP = {
     },
     "부추": {
       "file": "chives.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Chives",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -488,7 +488,7 @@ window.ICON_MAP = {
     },
     "배추": {
       "file": "napa-cabbage.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Napa cabbage",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -501,7 +501,7 @@ window.ICON_MAP = {
     },
     "시금치": {
       "file": "spinach.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Spinach",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -553,7 +553,7 @@ window.ICON_MAP = {
     },
     "떡": {
       "file": "rice-cake.png",
-      "category": "고기·해산물",
+      "category": "면·떡",
       "title": "Rice cake",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -566,7 +566,7 @@ window.ICON_MAP = {
     },
     "파스타": {
       "file": "pasta.png",
-      "category": "고기·해산물",
+      "category": "면·떡",
       "title": "Pasta",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -605,7 +605,7 @@ window.ICON_MAP = {
     },
     "브로콜리": {
       "file": "broccoli.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Broccoli",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -618,7 +618,7 @@ window.ICON_MAP = {
     },
     "상추": {
       "file": "lettuce.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Lettuce",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -631,7 +631,7 @@ window.ICON_MAP = {
     },
     "청경채": {
       "file": "bok-choy.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Bok choy",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -644,7 +644,7 @@ window.ICON_MAP = {
     },
     "숙주": {
       "file": "mung-bean-sprouts.png",
-      "category": "야채·과일",
+      "category": "채소·과일",
       "title": "Mung bean sprouts",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -657,7 +657,7 @@ window.ICON_MAP = {
     },
     "소면": {
       "file": "somen.png",
-      "category": "고기·해산물",
+      "category": "면·떡",
       "title": "Somen noodles",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -670,7 +670,7 @@ window.ICON_MAP = {
     },
     "우동면": {
       "file": "udon.png",
-      "category": "고기·해산물",
+      "category": "면·떡",
       "title": "Udon noodles",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -683,7 +683,7 @@ window.ICON_MAP = {
     },
     "라면": {
       "file": "ramen.png",
-      "category": "고기·해산물",
+      "category": "면·떡",
       "title": "Instant ramen",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -696,7 +696,7 @@ window.ICON_MAP = {
     },
     "당면": {
       "file": "glass-noodles.png",
-      "category": "고기·해산물",
+      "category": "면·떡",
       "title": "Glass noodles",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,
@@ -709,7 +709,7 @@ window.ICON_MAP = {
     },
     "김": {
       "file": "gim.png",
-      "category": "고기·해산물",
+      "category": "가공식품·반찬",
       "title": "Seaweed (gim)",
       "author": "내냉부 콘텐츠팀 (자체 제작)",
       "source": null,

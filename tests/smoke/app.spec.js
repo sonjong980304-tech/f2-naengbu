@@ -193,7 +193,7 @@ test('재료 직접 입력: 칩을 눌러 넣고 빼도 누른 칩이 화면에�
   await page.setViewportSize({ width: 390, height: 844 });
   await open(page);
   await page.click('[data-act="toggleAdd"]');
-  const chips = ['대파', '양파', '마늘', '당근', '감자', '김치', '애호박'];
+  const chips = ['대파', '양파', '마늘', '당근', '감자', '버섯', '애호박'];
   await page.locator(`[data-act="chip"][data-n="${chips[0]}"]`).scrollIntoViewIfNeeded();
   const topOf = n => page.locator(`[data-act="chip"][data-n="${n}"]`).evaluate(el => el.getBoundingClientRect().top);
   for (const n of [...chips, ...chips]) {   // 넣고 → 빼기
@@ -204,7 +204,7 @@ test('재료 직접 입력: 칩을 눌러 넣고 빼도 누른 칩이 화면에�
   await expect(page.locator(`[data-act="chip"][data-n="${chips[chips.length - 1]}"]`)).toBeFocused();   // 마지막으로 누른 칩
 
   // 목록의 × 로 빼도 목록 제목이 제자리 (아래 내용이 충분할 때 — 페이지 끝에서는 더 내릴 공간이 없어요)
-  for (const n of [...chips, '버섯', '사과', '스팸', '참치캔', '계란']) await page.locator(`[data-act="chip"][data-n="${n}"]`).click();
+  for (const n of [...chips, '사과', '토마토', '스팸', '참치캔', '계란']) await page.locator(`[data-act="chip"][data-n="${n}"]`).click();
   const title = page.locator('.list-title');
   await title.scrollIntoViewIfNeeded();
   for (let i = 0; i < 3; i++) {
@@ -586,5 +586,22 @@ test('효과음: 기본 켜짐, 버튼을 누르면 울리고, 끄면 안 울리
   await expect(page.locator('.soundbtn')).toHaveAttribute('aria-pressed', 'false');
   await page.locator('.soundbtn').click();
   await expect(page.locator('.soundbtn')).toHaveAttribute('aria-pressed', 'true');
+  expect(errors).toEqual([]);
+});
+
+test('냉장고 칸 6개: 분류별로 나뉘고, 예전 분류로 저장된 재료도 새 칸으로 옮겨짐', async ({ page }) => {
+  const errors = watchErrors(page);
+  await open(page);
+  const iso = d => { const x = new Date(); x.setDate(x.getDate() + d); return x.toISOString().slice(0, 10); };
+  await page.evaluate(items => localStorage.setItem('naengbu:fridge:v1', JSON.stringify(items)), [
+    ['대파', '야채·과일'], ['김치', '야채·과일'], ['쇠고기', '고기·해산물'], ['계란', '고기·해산물'], ['스팸', '고기·해산물'], ['라면', '고기·해산물'], ['간장', '양념류'],
+  ].map(([name, category], i) => ({ name, category, expiryDate: iso(i + 1) })));
+  await page.reload();
+  const shelf = h => page.locator('.shelf').filter({ has: page.locator('h3', { hasText: h }) }).locator('.tile-name');
+  await expect(page.locator('.shelf h3')).toHaveText(['채소 칸', '고기·해산물 칸', '달걀·유제품 칸', '반찬·가공식품 칸', '면·떡 칸', '문 선반']);
+  await expect(shelf('채소 칸')).toHaveText(['대파']);
+  await expect(shelf('달걀·유제품 칸')).toHaveText(['계란']);
+  await expect(shelf('반찬·가공식품 칸')).toHaveText(['김치', '스팸']);
+  await expect(shelf('면·떡 칸')).toHaveText(['라면']);
   expect(errors).toEqual([]);
 });

@@ -41,9 +41,9 @@
 const { COPY, RECIPES, FRIDGE_DATA, ICON_MAP } = window;   // data/*.js (원본: data/*.json)
 const ICON_SRC = Object.fromEntries(Object.values(ICON_MAP.icons).map(v => [v.file, ICON_MAP.basePath + v.file]));
 
-const CATS = FRIDGE_DATA.master;                       // { '야채·과일':[...], ... }
-const CAT_ORDER = ['야채·과일','고기·해산물','양념류'];
-const SHELF_KEY = {'야채·과일':'shelfVegetable','고기·해산물':'shelfProtein','양념류':'shelfDoor'};
+const CATS = FRIDGE_DATA.master;                       // { '채소·과일':[...], ... } 6갈래
+const CAT_ORDER = Object.keys(CATS);
+const SHELF_KEY = {'채소·과일':'shelfVegetable','고기·해산물':'shelfMeat','달걀·두부·유제품':'shelfDairy','가공식품·반찬':'shelfSide','면·떡':'shelfNoodle','양념류':'shelfDoor'};
 const MASTER = new Set(Object.values(CATS).flat());
 const catOf = n => CAT_ORDER.find(c => CATS[c].includes(n));
 const DISH_ICON = {'찌개·국':'soup','조림·찜':'cooking-pot','볶음':'utensils-crossed','볶음밥':'egg-fried','덮밥':'utensils','부침·전':'chef-hat','무침·샐러드':'salad'};
